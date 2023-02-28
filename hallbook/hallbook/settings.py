@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'user.apps.UserConfig',
     'rest_framework_simplejwt',
     'hallrecords',
+    'user'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +135,6 @@ REST_FRAMEWORK = {
     )
     
 }
+# AUTH_USER_MODEL = 'user.CustomUserManager'
+AUTH_USER_MODEL = 'user.CustomUser'
+
