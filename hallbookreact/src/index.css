@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .hallinputclass {
+    @apply w-full max-w-sm appearance-none rounded-md border border-cprimary-500 px-4 py-3
+        text-cprimary-800 placeholder-gray-500 shadow-sm focus:z-10 focus:border-blue-500 focus:shadow-lg
+        focus:outline-none focus:ring-purple-500 sm:text-base;
+  }
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Karla", sans-serif;
+}
