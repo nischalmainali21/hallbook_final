@@ -80,18 +80,19 @@ class Login(APIView):
         # Get user credentials from request data
         email = request.data.get('email')
         password = request.data.get('password')
-        user_type = request.data.get('user_type')
+    
 
         # Check if all required credentials are present
-        if email and password and user_type:
+        if email and password:
             user = None
             # Authenticate user based on user_type
-            if user_type == 'student':
-                user = authenticate(request=request, username=email, password=password, student__isnull=False)
-            elif user_type == 'admin':
-                user = authenticate(request=request, username=email, password=password, admin__isnull=False)
-            elif user_type == 'faculty':
-                user = authenticate(request=request, username=email, password=password, faculty__isnull=False)
+            # if user.user_type == 'student':
+            #     user = authenticate(request=request, username=email, password=password, student__isnull=False)
+            # elif user.user_type == 'admin':
+            #     user = authenticate(request=request, username=email, password=password, admin__isnull=False)
+            # elif user.user_type == 'faculty':
+            #     user = authenticate(request=request, username=email, password=password, faculty__isnull=False)
+            user = authenticate(request=request,username=email,password=password)
 
             # Check if user is authenticated
             if user is not None:
@@ -101,7 +102,8 @@ class Login(APIView):
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                     'message': 'Login done successfully.',
-                    'success': True
+                    'success': True,
+                    'user_type': user.user_type,
                 }
                 return Response(data, status=200)
 
