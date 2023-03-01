@@ -14,7 +14,7 @@ export default function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  let { user } = useContext(AuthContext);
+  let { user,logoutUser } = useContext(AuthContext);
 
   return (
     <div>
@@ -70,7 +70,7 @@ export default function Navbar() {
           {/* secondary nav */}
           <div className="hidden md:block">
             {user ? (
-              <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2">
+              <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2" onClick={logoutUser}>
                 Logout
               </button>
             ) : (
@@ -149,7 +149,7 @@ export default function Navbar() {
             </li>
             <li>
               {user ? (
-                <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2">
+                <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2" onClick={logoutUser}>
                   Logout
                 </button>
               ) : (
