@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_type: "student",
         email: e.target.userName.value,
         password: e.target.password.value,
       }), //user_type

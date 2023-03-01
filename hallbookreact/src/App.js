@@ -16,11 +16,14 @@ export default function App() {
         <Navbar />
         <Routes>
           {/* <Route element={<PrivateRoutes isuserType="faculty"/>}> */}
-          <Route element={<PrivateRoutes/>}>
+          <Route element={<PrivateRoutes isuserType="student" />}>
             <Route path="/" element={<Home />} exact />
-            <Route path="/about" element={<About />} />
+
             <Route path="/halldetail/:hall" element={<HallDetails />}></Route>
             <Route path="/bookhall/:hall" element={<BookHall />}></Route>
+          </Route>
+          <Route element={<PrivateRoutes isuserType="faculty" />}>
+            <Route path="/about" element={<About />} />
           </Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="*" element={<Error />}></Route>
