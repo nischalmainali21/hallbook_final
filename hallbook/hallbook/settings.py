@@ -143,3 +143,8 @@ REST_FRAMEWORK = {
 # AUTH_USER_MODEL = 'user.CustomUserManager'
 AUTH_USER_MODEL = 'user.CustomUser'
 
+#media root
+MEDIA_ROOT = BASE_DIR/"media"
+MEDIA_ROOT = "/media/"
+
+
