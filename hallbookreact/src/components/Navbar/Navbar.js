@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
 
 import "./Navbar.css";
 
@@ -12,6 +13,8 @@ export default function Navbar() {
   const loginNormalClassLink = normalClassLink + " bg-csecond-200";
 
   const [isOpen, setIsOpen] = useState(false);
+
+  let { user } = useContext(AuthContext);
 
   return (
     <div>
@@ -66,14 +69,20 @@ export default function Navbar() {
           </div>
           {/* secondary nav */}
           <div className="hidden md:block">
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                isActive ? activeClassLink : loginNormalClassLink
-              }
-            >
-              Login
-            </NavLink>
+            {user ? (
+              <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2">
+                Logout
+              </button>
+            ) : (
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive ? activeClassLink : loginNormalClassLink
+                }
+              >
+                Login
+              </NavLink>
+            )}
           </div>
           {/* hamburger */}
           <div className="md:hidden">
@@ -116,7 +125,7 @@ export default function Navbar() {
         </div>
         {/* mobile menu items */}
         {/* md:hidden min-h-[100vh] */}
-        <div className={isOpen ? "md:hidden" : "hidden"}> 
+        <div className={isOpen ? "md:hidden" : "hidden"}>
           <ul className="mb-6 flex flex-col items-center justify-center gap-y-6 md:w-auto">
             <li>
               <NavLink
@@ -139,19 +148,25 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                  isActive ? activeClassLink : loginNormalClassLink
-                }
-                //   className={({ isActive }) => [
-                //     "bg-yellow-400",
-                //     isActive ? activeClassLink : normalClassLink
-                //   ].join(" ")
-                // }
-              >
-                Login
-              </NavLink>
+              {user ? (
+                <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2">
+                  Logout
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive ? activeClassLink : loginNormalClassLink
+                  }
+                  //   className={({ isActive }) => [
+                  //     "bg-yellow-400",
+                  //     isActive ? activeClassLink : normalClassLink
+                  //   ].join(" ")
+                  // }
+                >
+                  Login
+                </NavLink>
+              )}
             </li>
           </ul>
         </div>

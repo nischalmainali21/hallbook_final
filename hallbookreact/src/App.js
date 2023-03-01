@@ -12,8 +12,9 @@ import BookHall from "./components/Hall/BookHall";
 export default function App() {
   return (
     <div className="App">
-      <Navbar />
+      
       <AuthProvider>
+      <Navbar />
         <Routes>
           <Route path="/" element={<Home />} exact />
           <Route element={<PrivateRoutes />}>
