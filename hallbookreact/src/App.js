@@ -15,7 +15,8 @@ export default function App() {
       <AuthProvider>
         <Navbar />
         <Routes>
-          <Route element={<PrivateRoutes />}>
+          {/* <Route element={<PrivateRoutes isuserType="faculty"/>}> */}
+          <Route element={<PrivateRoutes/>}>
             <Route path="/" element={<Home />} exact />
             <Route path="/about" element={<About />} />
             <Route path="/halldetail/:hall" element={<HallDetails />}></Route>

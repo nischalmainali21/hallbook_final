@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     let data = await response.json();
-    // console.log("data",data)
+    //console.log("data",data)
     // console.log("🚀 ~ file: AuthContext.js:21 ~ loginUser ~ response:", response)
     if (response.status === 200) {
       setAuthTokens(data);
