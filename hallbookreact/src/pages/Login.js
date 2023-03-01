@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import LoginForm from "../components/Login/LoginForm";
+import AuthContext from "../context/AuthContext";
 
 
 const loginBtnClass = `relative mx-auto block w-2/6 max-w-xs rounded-full bg-blue-500 px-6 py-4 text-base 
@@ -8,11 +10,16 @@ hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`
 
 function Login() {
+
+  let {loginUser} = useContext(AuthContext)
+
   const handleSubmit = (e) => {
 
     console.log(e.target.userName.value,e.target.password.value)
 
     e.preventDefault();
+    //sent to the function from authContext along with the event
+    loginUser(e)
     //handle authentication of user login
   };
 
