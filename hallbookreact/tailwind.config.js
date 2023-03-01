@@ -33,10 +33,15 @@ module.exports = {
           '91%':{transform: 'translateX(2px)'},
           '96%':{transform: 'translateX(-2px)'},
           '100%':{transform: 'translateX(0px)'},
+        },
+        slideTop:{
+          '0%':{transform: 'translateY(0)'},
+          '100%':{transform: 'translateY(-100px)'},
         }
       },
       animation:{
-        bounceleft:'bounceleft 0.25s ease-in-out .5s'
+        bounceleft:'bounceleft 0.25s ease-in-out .5s',
+        slideTop:'slideTop 0.5s ease-in-out'
       },
     },
   },

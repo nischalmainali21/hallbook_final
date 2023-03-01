@@ -3,23 +3,20 @@ import { Link } from "react-router-dom";
 import LoginForm from "../components/Login/LoginForm";
 import AuthContext from "../context/AuthContext";
 
-
 const loginBtnClass = `relative mx-auto block w-2/6 max-w-xs rounded-full bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
-focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`
+focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`;
 
 function Login() {
-
-  let {loginUser} = useContext(AuthContext)
+  let { loginUser, credentialsError } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
-
-    console.log(e.target.userName.value,e.target.password.value)
+    console.log(e.target.userName.value, e.target.password.value);
 
     e.preventDefault();
     //sent to the function from authContext along with the event
-    loginUser(e)
+    loginUser(e);
     //handle authentication of user login
   };
 
@@ -51,21 +48,13 @@ function Login() {
         </div>
       </div>
       {/* header ends here */}
-
+      <div className="flex justify-center items-center m-0 p-2">{credentialsError ? (<p className="text-red-600">Invalid Credentials</p>) : (null)}</div>
       {/* the input fileds */}
 
-      <LoginForm 
-      id="loginForm"
-      onSubmit={handleSubmit}
-      />
+      <LoginForm id="loginForm" onSubmit={handleSubmit} />
 
       {/* submit button */}
-      <button
-        type="submit"
-        form="loginForm"
-
-        className={loginBtnClass}
-      >
+      <button type="submit" form="loginForm" className={loginBtnClass}>
         Sign In
       </button>
       {/* submit button ends here */}
@@ -74,4 +63,3 @@ function Login() {
 }
 
 export default Login;
-

@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
       : null
   );
 
+  let [credentialsError,setCredentialsError] = useState(null)  //for invalid credentials
   //   let [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -43,7 +44,10 @@ export const AuthProvider = ({ children }) => {
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
       navigate("/");
-    } else {
+    }else if(response.status === 400){
+        setCredentialsError(true)
+    } 
+    else {
       alert("something is wrong");
     }
   };
@@ -80,8 +84,10 @@ export const AuthProvider = ({ children }) => {
   let contextData = {
     user: user,
     authTokens: authTokens,
+    credentialsError:credentialsError,
     loginUser: loginUser,
     logoutUser: logoutUser,
+    
   };
 
   /*   useEffect(() => {
