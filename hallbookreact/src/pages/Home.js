@@ -30,12 +30,12 @@ hallListOrg[1].bookings = {
 // hallList[0].bookings['2023-02-25']['14:00-15:30']= {user:'Mike',event:"initiation"}
 
 export default function Home() {
-  /*const [data, setData] = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/halls_api/")
+    fetch("http://127.0.0.1:8000/api/hall/halls/")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -58,7 +58,7 @@ export default function Home() {
   if(loading) return "loading..."
   if(error) return "error..."
 
-  console.log(data)*/
+  console.log(data)
 
   return (
     <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 p-2 md:w-2/3 md:gap-8">

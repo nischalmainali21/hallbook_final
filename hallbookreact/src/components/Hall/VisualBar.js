@@ -25,14 +25,9 @@ function sortIntervals(intervals) {
 }
 
 function getDuration(bookedIntervals, unbookedIntervals, intervals) {
-  console.log(
-    "bookedIntervals",
-    bookedIntervals,
-    "unbooked intervals",
-    unbookedIntervals
-  );
+  
 
-  console.log("sortedintervals", intervals);
+  
   const intervalTimes = intervals.map((interval) => {
     const [start, end] = interval.split("-");
     return {
@@ -79,7 +74,7 @@ function VisualBar({ bookedIntervals, unbookedIntervals }) {
     bookedIndex.push(index);
   });
 
-  console.log(widthArr);
+  
 
   const divs = widthArr.map((item, index) => {
     let isBooked = bookedIndex.sort().includes(index)
