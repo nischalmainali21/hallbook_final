@@ -16,9 +16,8 @@ export default function App() {
         <Navbar />
         <Routes>
           {/* <Route element={<PrivateRoutes isuserType="faculty"/>}> */}
-          <Route element={<PrivateRoutes isuserType="student" />}>
+          <Route element={<PrivateRoutes isuserType="student"/>}>
             <Route path="/" element={<Home />} exact />
-
             <Route path="/halldetail/:hall" element={<HallDetails />}></Route>
             <Route path="/bookhall/:hall" element={<BookHall />}></Route>
           </Route>
