@@ -17,8 +17,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = ['id','bookedHall','verified_by', 'verified','event','startTime','endTime']
-from rest_framework import serializers
-from .models import Event, Hall
+
 
 class EventSerializer(serializers.ModelSerializer):
     """
