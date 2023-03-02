@@ -63,12 +63,13 @@ export default function Home() {
       });
   }, []);
 
-  let api = useFetch()
-  let getHallList = async() => {
-    let {response,data} = await api('/api/hall/halls/')
-  }
+  // let api = useFetch()
+  // let getHallList = async() => {
+  //   let {response,data} = await api('/api/hall/halls/')
+  //   console.log(response,data)
+  // }
 
-  getHallList()
+  // getHallList()
 
   if (loading) return "loading..."; //maybe a spinner component
   if (error) return "error...";
