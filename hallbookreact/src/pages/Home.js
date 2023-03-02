@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import HallCard from "../components/Hall/HallCard";
 import hallListOrg from "../components/Hall/HallList";
 import useAuth from "../hooks/useAuth";
+import fetchInstance from "../utils/fetchInstance"
 
 //somehow works
 hallListOrg[0].bookings = {
@@ -60,6 +61,12 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
+
+  let getHallList = async() => {
+    let {response,data} = await fetchInstance('/api/hall/halls/')
+  }
+
+  getHallList()
 
   if (loading) return "loading..."; //maybe a spinner component
   if (error) return "error...";

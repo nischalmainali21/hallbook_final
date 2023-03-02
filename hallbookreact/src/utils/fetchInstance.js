@@ -6,7 +6,7 @@ let baseURL = "http://127.0.0.1:8000"
 let originalRequest = async (url,config) => {
   url = `${baseURL}${url}`
   let response = await fetch(url,config)
-  let data = response.json()
+  let data = await response.json()
   console.log('response',data)
   return {response,data}
 }
@@ -32,6 +32,8 @@ let customFetcher = async (url,config={}) => {
 
   const user = jwt_decode(authTokens.access)
   const isExpired = differenceInMilliseconds(fromUnixTime(user.exp),new Date()) < 1;
+  console.log(differenceInMilliseconds(fromUnixTime(user.exp),new Date()))
+  console.log(isExpired)
   
   if(isExpired){
     authTokens = await refreshToken(authTokens)
