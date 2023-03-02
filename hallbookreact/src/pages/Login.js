@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import LoginForm from "../components/Login/LoginForm";
-
+import { useState } from "react";
 import useAuth from "../hooks/useAuth";
 
 const loginBtnClass = `relative mx-auto block w-2/6 max-w-xs rounded-full bg-blue-500 px-6 py-4 text-base 
@@ -9,7 +9,13 @@ hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`;
 
 function Login() {
-  let { loginUser, credentialsError } = useAuth();
+  let { loginUser, credentialsError} = useAuth();
+
+  const [loginState, setLoginState] = useState({userName:'',password:''});
+
+  const handleChange = (e) => {
+    setLoginState({ ...loginState, [e.target.id]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     console.log(e.target.userName.value, e.target.password.value);
@@ -17,6 +23,9 @@ function Login() {
     e.preventDefault();
     //sent to the function from authContext along with the event
     loginUser(e);
+    if(credentialsError){
+      setLoginState({userName:'',password:''})
+    }
     //handle authentication of user login
   };
 
@@ -53,7 +62,7 @@ function Login() {
       </div>
       {/* the input fileds */}
 
-      <LoginForm id="loginForm" onSubmit={handleSubmit} credentialsError={credentialsError}/>
+      <LoginForm id="loginForm" onSubmit={handleSubmit} handleChange={handleChange} loginState = {loginState}/>
 
       {/* submit button */}
       <button type="submit" form="loginForm" className={loginBtnClass}>

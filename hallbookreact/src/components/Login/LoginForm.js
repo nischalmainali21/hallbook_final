@@ -2,7 +2,7 @@ import { useState } from "react";
 import Input from "./Input";
 
 
-function LoginForm({id,onSubmit}) {
+function LoginForm({id,onSubmit,handleChange,loginState}) {
   
   const loginFields = [
     {
@@ -31,17 +31,15 @@ function LoginForm({id,onSubmit}) {
     },
   ];
 
-  let fieldsState = {};
-
-  loginFields.forEach((field) => (fieldsState[field.id] = "")); 
+  
 
   
 
-  const [loginState, setLoginState] = useState(fieldsState);
+  // const [loginState, setLoginState] = useState(fieldsState);
 
-  const handleChange = (e) => {
-    setLoginState({ ...loginState, [e.target.id]: e.target.value });
-  };
+  // const handleChange = (e) => {
+  //   setLoginState({ ...loginState, [e.target.id]: e.target.value });
+  // };
 
   return (
 
