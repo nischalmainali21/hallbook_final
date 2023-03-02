@@ -9,9 +9,9 @@ hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`;
 
 function Login() {
-  let { loginUser, credentialsError} = useAuth();
+  let { loginUser, credentialsError,user } = useAuth();
 
-  const [loginState, setLoginState] = useState({userName:'',password:''});
+  const [loginState, setLoginState] = useState({ userName: "", password: "" });
 
   const handleChange = (e) => {
     setLoginState({ ...loginState, [e.target.id]: e.target.value });
@@ -23,11 +23,14 @@ function Login() {
     e.preventDefault();
     //sent to the function from authContext along with the event
     loginUser(e);
-    if(credentialsError){
-      setLoginState({userName:'',password:''})
-    }
+
+    setLoginState({ userName: "", password: "" });
+
     //handle authentication of user login
   };
+
+  //add some component to handle this
+  if (user) return "You are already logged in."  
 
   return (
     <div className=" min-h-screen">
@@ -58,11 +61,22 @@ function Login() {
       </div>
       {/* header ends here */}
       <div className="m-0 flex items-center justify-center p-2">
-        <p className={`${credentialsError?"text-red-500 animate-focus-in-expand":"hidden"}`}>Invalid credentials</p>
+        <p
+          className={`${
+            credentialsError ? "animate-focus-in-expand text-red-500" : "hidden"
+          }`}
+        >
+          Invalid credentials
+        </p>
       </div>
       {/* the input fileds */}
 
-      <LoginForm id="loginForm" onSubmit={handleSubmit} handleChange={handleChange} loginState = {loginState}/>
+      <LoginForm
+        id="loginForm"
+        onSubmit={handleSubmit}
+        handleChange={handleChange}
+        loginState={loginState}
+      />
 
       {/* submit button */}
       <button type="submit" form="loginForm" className={loginBtnClass}>

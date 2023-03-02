@@ -57,7 +57,7 @@ export default function Navbar() {
                   <NavLink
                     to="/"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink 
+                      isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="student"?" hidden":""}`
                     }
                     //+ `${userType===null?"":userType!=="student"?" hidden":""}`
                   >
@@ -69,7 +69,7 @@ export default function Navbar() {
                   <NavLink
                     to="/about"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink
+                      isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="faculty"?" hidden":""}`
                     }
                   >
                     About
@@ -142,7 +142,7 @@ export default function Navbar() {
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : normalClassLink
+                  isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="student"?" hidden":""}`
                 }
               >
                 Home
@@ -152,7 +152,7 @@ export default function Navbar() {
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : normalClassLink
+                  isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="faculty"?" hidden":""}`
                 }
               >
                 About
