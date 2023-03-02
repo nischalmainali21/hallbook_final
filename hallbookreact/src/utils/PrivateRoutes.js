@@ -1,31 +1,33 @@
-import { useContext } from "react";
-import { Outlet, Navigate} from "react-router-dom";
-import AuthContext from "../context/AuthContext";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
 
-const PrivateRoutes = ({isuserType}) => {
+import useAuth from "../hooks/useAuth";
+
+const PrivateRoutes = ({ isuserType }) => {
   console.log("private route works");
+  console.log("isuserType", isuserType);
 
-  //user_type has been sent with response 
+  //user_type has been sent with response
   //which is authTokens.user_type
-  let {user,authTokens} = useContext(AuthContext)
-  
-  
-  return (
-    user && isuserType===authTokens.user_type?<Outlet/>:<Navigate to='/login'/>
-  )
+  let { user, authTokens } = useAuth();
+  const location = useLocation();
+
+  return user && isuserType === authTokens.user_type ? (
+    <Outlet />
+  ) : user ? (
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
+  ) : (
+    <Navigate to="/login" state={{ from: location }} replace />
+  );
 };
 
 // const PrivateRoutes = () => {
 //   console.log("private route works");
 
 //   let {user} = useContext(AuthContext)
-  
+
 //   return (
 //     user?<Outlet/>:<Navigate to='/login'/>
 //   )
 // };
-
-
-
 
 export default PrivateRoutes;

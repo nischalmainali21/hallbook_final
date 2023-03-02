@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Navbar from "./components/Navbar/Navbar";
 import HallDetails from "./components/Hall/HallDetails";
 import BookHall from "./components/Hall/BookHall";
+import Unauthorized from "./pages/Unauthorized";
 
 export default function App() {
   return (
@@ -15,6 +16,8 @@ export default function App() {
       <AuthProvider>
         <Navbar />
         <Routes>
+          <Route path="/unauthorized" element={<Unauthorized />}></Route>
+
           {/* <Route element={<PrivateRoutes isuserType="faculty"/>}> */}
           <Route element={<PrivateRoutes isuserType="student"/>}>
             <Route path="/" element={<Home />} exact />
