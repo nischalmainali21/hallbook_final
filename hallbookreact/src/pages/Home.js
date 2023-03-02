@@ -3,7 +3,8 @@ import { Navigate } from "react-router-dom";
 import HallCard from "../components/Hall/HallCard";
 import hallListOrg from "../components/Hall/HallList";
 import useAuth from "../hooks/useAuth";
-import fetchInstance from "../utils/fetchInstance"
+// import fetchInstance from "../utils/fetchInstance"
+import useFetch from "../hooks/useFetch";
 
 //somehow works
 hallListOrg[0].bookings = {
@@ -62,8 +63,9 @@ export default function Home() {
       });
   }, []);
 
+  let api = useFetch()
   let getHallList = async() => {
-    let {response,data} = await fetchInstance('/api/hall/halls/')
+    let {response,data} = await api('/api/hall/halls/')
   }
 
   getHallList()
