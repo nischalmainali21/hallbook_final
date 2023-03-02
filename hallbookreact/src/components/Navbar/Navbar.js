@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import {  useState } from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import AuthContext from "../../context/AuthContext";
+import useAuth from "../../hooks/useAuth"
+
 
 import "./Navbar.css";
 
@@ -14,7 +15,14 @@ export default function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  let { user,logoutUser } = useContext(AuthContext);
+  let { user,logoutUser,authTokens } = useAuth();
+  console.log(authTokens)
+  const userType = authTokens?.user_type || null
+  console.log(userType)
+
+  const homePath = userType===null?"/":userType === "student"?"/":userType === "faculty"?"/about":"/adminpage"
+  console.log(homePath)
+
 
   return (
     <div>
@@ -24,7 +32,8 @@ export default function Navbar() {
           <div className="flex items-center space-x-10">
             {/* logo */}
             <div>
-              <Link to="/" className="flex items-center space-x-2 px-2 py-5">
+              {/* <Link to="/" className="flex items-center space-x-2 px-2 py-5"> */}
+              <Link to={homePath} className="flex items-center space-x-2 px-2 py-5">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -48,10 +57,12 @@ export default function Navbar() {
                   <NavLink
                     to="/"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink
+                      isActive ? activeClassLink : normalClassLink 
                     }
+                    //+ `${userType===null?"":userType!=="student"?" hidden":""}`
                   >
                     Home
+                    {/* {userType===null?"Home":userType === "student"?"Home":userType === "faculty"?"FacultyHome":"AdminHome"} */}
                   </NavLink>
                 </li>
                 <li>

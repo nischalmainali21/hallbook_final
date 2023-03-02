@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
 import LoginForm from "../components/Login/LoginForm";
-import AuthContext from "../context/AuthContext";
+
 import useAuth from "../hooks/useAuth";
 
 const loginBtnClass = `relative mx-auto block w-2/6 max-w-xs rounded-full bg-blue-500 px-6 py-4 text-base 
@@ -10,7 +9,7 @@ hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`;
 
 function Login() {
-  let { loginUser, credentialsError } = useAuth()
+  let { loginUser, credentialsError } = useAuth();
 
   const handleSubmit = (e) => {
     console.log(e.target.userName.value, e.target.password.value);
@@ -49,10 +48,12 @@ function Login() {
         </div>
       </div>
       {/* header ends here */}
-      <div className="flex justify-center items-center m-0 p-2">{credentialsError ? (<p className="text-red-600">Invalid Credentials</p>) : (null)}</div>
+      <div className="m-0 flex items-center justify-center p-2">
+        <p className={`${credentialsError?"text-red-500 animate-focus-in-expand":"hidden"}`}>Invalid credentials</p>
+      </div>
       {/* the input fileds */}
 
-      <LoginForm id="loginForm" onSubmit={handleSubmit} />
+      <LoginForm id="loginForm" onSubmit={handleSubmit} credentialsError={credentialsError}/>
 
       {/* submit button */}
       <button type="submit" form="loginForm" className={loginBtnClass}>
