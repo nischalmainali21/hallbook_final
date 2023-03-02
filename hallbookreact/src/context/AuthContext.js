@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import jwt_decode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -22,6 +22,8 @@ export const AuthProvider = ({ children }) => {
   //   let [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const from =location.state?.from?.pathname ||  "/";
 
   let loginUser = async (e) => {
     let response = await fetch("http://127.0.0.1:8000/api/user/login/", {
@@ -42,7 +44,8 @@ export const AuthProvider = ({ children }) => {
       setAuthTokens(data);
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
-      navigate("/");
+      // navigate("/");
+      navigate(from,{replace:true})
     } else if (response.status === 400) {
       setCredentialsError(true);
     } else {
