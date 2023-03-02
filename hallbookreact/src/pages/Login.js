@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoginForm from "../components/Login/LoginForm";
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
@@ -9,7 +9,8 @@ hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg md:mx-auto md:w-1/6 md:py-3`;
 
 function Login() {
-  let { loginUser, credentialsError,user } = useAuth();
+  let { loginUser, credentialsError, user, } = useAuth();
+  
 
   const [loginState, setLoginState] = useState({ userName: "", password: "" });
 
@@ -26,11 +27,15 @@ function Login() {
 
     setLoginState({ userName: "", password: "" });
 
-    //handle authentication of user login
   };
 
   //add some component to handle this
-  if (user) return "You are already logged in."  
+  if (user){
+    // let path = authTokens.user_type==="admin"?"/adminpage":authTokens.user_type==="faculty"?"/about":"/"
+    // navigate(path)
+    return "You are already logged in.";
+    
+  } 
 
   return (
     <div className=" min-h-screen">

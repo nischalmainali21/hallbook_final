@@ -44,8 +44,8 @@ export const AuthProvider = ({ children }) => {
       setAuthTokens(data);
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
-      // navigate("/");
-      navigate(from,{replace:true})
+      //navigate("/");
+      // navigate(from,{replace:true})
     } else if (response.status === 400) {
       setCredentialsError(true);
     } else {
