@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }) => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
+    setCredentialsError(false)
     navigate("/login");
   };
 
