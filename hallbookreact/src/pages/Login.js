@@ -19,7 +19,7 @@ function Login() {
   };
 
   const handleSubmit = (e) => {
-    console.log(e.target.userName.value, e.target.password.value);
+    // console.log(e.target.userName.value, e.target.password.value);
 
     e.preventDefault();
     //sent to the function from authContext along with the event

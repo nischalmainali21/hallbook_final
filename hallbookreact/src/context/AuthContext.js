@@ -38,14 +38,14 @@ export const AuthProvider = ({ children }) => {
     });
 
     let data = await response.json();
-    console.log("data", data);
+    // console.log("data", data);
     // console.log("🚀 ~ file: AuthContext.js:21 ~ loginUser ~ response:", response)
     if (response.status === 200) {
       setAuthTokens(data);
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
       //navigate("/");
-      // navigate(from,{replace:true})
+      navigate(from,{replace:true})
     } else if (response.status === 400) {
       setCredentialsError(true);
     } else {

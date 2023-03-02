@@ -19,8 +19,12 @@ export default function App() {
           <Route path="/unauthorized" element={<Unauthorized />}></Route>
 
           {/* <Route element={<PrivateRoutes isuserType="faculty"/>}> */}
-          <Route element={<PrivateRoutes isuserType="student"/>}>
+          {/* home is made accessible to all logged in user and the redirect is handled within Home Page */}
+          <Route element={<PrivateRoutes />}>
             <Route path="/" element={<Home />} exact />
+          </Route>
+
+          <Route element={<PrivateRoutes isuserType="student" />}>
             <Route path="/halldetail/:hall" element={<HallDetails />}></Route>
             <Route path="/bookhall/:hall" element={<BookHall />}></Route>
           </Route>

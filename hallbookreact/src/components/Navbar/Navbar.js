@@ -1,8 +1,7 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import useAuth from "../../hooks/useAuth"
-
+import useAuth from "../../hooks/useAuth";
 
 import "./Navbar.css";
 
@@ -15,14 +14,20 @@ export default function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  let { user,logoutUser,authTokens } = useAuth();
-  console.log(authTokens)
-  const userType = authTokens?.user_type || null
-  console.log(userType)
+  let { user, logoutUser, authTokens } = useAuth();
+  // console.log(authTokens);
+  const userType = authTokens?.user_type || null;
+  // console.log(userType)
 
-  const homePath = userType===null?"/":userType === "student"?"/":userType === "faculty"?"/about":"/adminpage"
-  console.log(homePath)
-
+  const homePath =
+    userType === null
+      ? "/"
+      : userType === "student"
+      ? "/"
+      : userType === "faculty"
+      ? "/about"
+      : "/adminpage";
+  // console.log(homePath)
 
   return (
     <div>
@@ -33,7 +38,10 @@ export default function Navbar() {
             {/* logo */}
             <div>
               {/* <Link to="/" className="flex items-center space-x-2 px-2 py-5"> */}
-              <Link to={homePath} className="flex items-center space-x-2 px-2 py-5">
+              <Link
+                to={homePath}
+                className="flex items-center space-x-2 px-2 py-5"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -57,7 +65,16 @@ export default function Navbar() {
                   <NavLink
                     to="/"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="student"?" hidden":""}`
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? ""
+                              : userType !== "student"
+                              ? " hidden"
+                              : ""
+                          }`
                     }
                     //+ `${userType===null?"":userType!=="student"?" hidden":""}`
                   >
@@ -69,7 +86,16 @@ export default function Navbar() {
                   <NavLink
                     to="/about"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="faculty"?" hidden":""}`
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? ""
+                              : userType !== "faculty"
+                              ? " hidden"
+                              : ""
+                          }`
                     }
                   >
                     About
@@ -81,7 +107,10 @@ export default function Navbar() {
           {/* secondary nav */}
           <div className="hidden md:block">
             {user ? (
-              <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2" onClick={logoutUser}>
+              <button
+                className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2"
+                onClick={logoutUser}
+              >
                 Logout
               </button>
             ) : (
@@ -142,7 +171,16 @@ export default function Navbar() {
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="student"?" hidden":""}`
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
                 }
               >
                 Home
@@ -152,7 +190,16 @@ export default function Navbar() {
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : normalClassLink +`${userType===null?"":userType!=="faculty"?" hidden":""}`
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "faculty"
+                          ? " hidden"
+                          : ""
+                      }`
                 }
               >
                 About
@@ -160,7 +207,10 @@ export default function Navbar() {
             </li>
             <li>
               {user ? (
-                <button className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2" onClick={logoutUser}>
+                <button
+                  className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2"
+                  onClick={logoutUser}
+                >
                   Logout
                 </button>
               ) : (
