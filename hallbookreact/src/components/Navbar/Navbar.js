@@ -19,6 +19,11 @@ export default function Navbar() {
   const userType = authTokens?.user_type || null;
   // console.log(userType)
 
+  const handleMobileLogout = () => {
+    setIsOpen(!isOpen)
+    logoutUser()
+  }
+
   const homePath =
     userType === null
       ? "/"
@@ -101,6 +106,25 @@ export default function Navbar() {
                     About
                   </NavLink>
                 </li>
+                <li>
+                  <NavLink
+                    to="/adminpage"
+                    className={({ isActive }) =>
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? " hidden"
+                              : userType === "admin"
+                              ? ""
+                              : " hidden"
+                          }`
+                    }
+                  >
+                    Admin
+                  </NavLink>
+                </li>
               </ul>
             </div>
           </div>
@@ -170,6 +194,7 @@ export default function Navbar() {
             <li>
               <NavLink
                 to="/"
+                onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
                   isActive
                     ? activeClassLink
@@ -189,6 +214,7 @@ export default function Navbar() {
             <li>
               <NavLink
                 to="/about"
+                onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
                   isActive
                     ? activeClassLink
@@ -206,16 +232,37 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li>
+                  <NavLink
+                    to="/adminpage"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className={({ isActive }) =>
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? " hidden"
+                              : userType === "admin"
+                              ? ""
+                              : " hidden"
+                          }`
+                    }
+                  >
+                    Admin
+                  </NavLink>
+                </li>
+            <li>
               {user ? (
                 <button
                   className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2"
-                  onClick={logoutUser}
+                  onClick={handleMobileLogout}
                 >
                   Logout
                 </button>
               ) : (
                 <NavLink
                   to="/login"
+                  onClick={() => setIsOpen(!isOpen)}
                   className={({ isActive }) =>
                     isActive ? activeClassLink : loginNormalClassLink
                   }
