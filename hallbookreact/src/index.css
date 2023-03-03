@@ -10,10 +10,10 @@
         focus:outline-none focus:ring-purple-500 sm:text-base;
   }
   .buttonfixedclass {
-    @apply relative mx-auto block  rounded-lg px-6 py-4 
+    @apply relative  block  rounded-lg px-6 py-4 
     text-base font-medium uppercase  leading-tight  shadow-md transition duration-150 
     ease-in-out  hover:shadow-lg focus:shadow-lg
-    focus:outline-none focus:ring-0 active:shadow-lg md:mx-auto md:py-3;
+    focus:outline-none focus:ring-0 active:shadow-lg  md:py-3;
   }
 }
 

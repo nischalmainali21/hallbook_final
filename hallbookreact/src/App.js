@@ -10,6 +10,7 @@ import HallDetails from "./components/Hall/HallDetails";
 import BookHall from "./components/Hall/BookHall";
 import Unauthorized from "./pages/Unauthorized";
 import AdminPage from "./pages/AdminPage";
+import CreateHall from "./components/Admin/CreateHall";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
           </Route>
           <Route element={<PrivateRoutes isuserType="admin" />}>
             <Route path="/adminpage" element={<AdminPage />} />
+            <Route path="/createhall" element={<CreateHall />} />
           </Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="*" element={<Error />}></Route>

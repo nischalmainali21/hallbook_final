@@ -32,7 +32,7 @@ function AdminPage() {
     <div className="md:grid grid-cols-[200px_1fr]">
       <div className="mt-6 md:mt-16">
         <div>
-          <button className={buttonfixedclass+` bg-green-500 text-black hover:bg-green-700 focus:bg-green-700 active:bg-green-800`}>
+          <button className={buttonfixedclass+` bg-green-500 text-black hover:bg-green-700 focus:bg-green-700 active:bg-green-800 mx-auto`}>
                 Add New Hall
           </button>
         </div>
