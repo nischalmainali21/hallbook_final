@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   let [credentialsError, setCredentialsError] = useState(null); //for invalid credentials
-  //   let [loading, setLoading] = useState(true);
+  let [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,22 +93,17 @@ export const AuthProvider = ({ children }) => {
     logoutUser: logoutUser,
   };
 
-  /*   useEffect(() => {
+  useEffect(()=> {
 
-         if(loading){
-             updateToken()
-         }
+    if(authTokens){
+        setUser(jwt_decode(authTokens.access))
+    }
+    setLoading(false)
 
-     let fourMinutes = 4*60*1000
-    let interval = setInterval(() => {
-       if (authTokens) {
-      updateToken();
-     }
-    },fourMinutes);
-    return ()=> clearInterval(interval)
-   }, [authTokens, loading]); */
+
+}, [authTokens, loading])
 
   return (
-    <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={contextData}>{loading?null:children}</AuthContext.Provider>
   );
 };
