@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import HallInput from "../Hall/HallInput";
 const buttonfixedclass = "buttonfixedclass";
 
-function HallForm() {
+function HallForm({pageTitle,handleSubmit}) {
   const HallFormFields = [
     {
       labelText: "Hall Name",
@@ -37,19 +37,16 @@ function HallForm() {
   HallFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
 
   const [inputState, setInputState] = useState(inputFieldsState);
+  console.log(inputState)
 
   const handleChange = (e) => {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
   return (
     <>
       <div className="mx-auto mt-6 min-h-screen w-full max-w-3xl p-4 shadow-lg">
-        <div className="text-3xl font-bold">{}</div>
+        <div className="text-3xl font-bold">{pageTitle}</div>
         <div className="text-sm text-gray-500">{}</div>
         <form onSubmit={handleSubmit}>
           <div>
