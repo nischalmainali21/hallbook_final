@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       setAuthTokens(data);
       setUser(jwt_decode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
+      console.log("logged in at time",new Date())
       navigate("/");
       //navigate(from,{replace:true})
     } else if (response.status === 400) {
