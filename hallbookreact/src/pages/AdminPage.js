@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import AdminHallCard from "../components/Admin/AdminHallCard";
 
 const buttonfixedclass = `buttonfixedclass`
@@ -7,7 +8,7 @@ function AdminPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+const navigate = useNavigate()
   useEffect(() => {
     let getHallList = async () => {
       try {
@@ -23,16 +24,20 @@ function AdminPage() {
       }
     };
     getHallList();
-  }, []);
+  }, [data]);
 
   if (loading) return "Loading";
   if (error) return "error";
+
+  const handleNewHallClick = () => {
+    navigate('/adminpage/createhall')
+  }
 
   return (
     <div className="md:grid grid-cols-[200px_1fr]">
       <div className="mt-6 md:mt-16">
         <div>
-          <button className={buttonfixedclass+` bg-green-500 text-black hover:bg-green-700 focus:bg-green-700 active:bg-green-800 mx-auto`}>
+          <button onClick = {handleNewHallClick} className={buttonfixedclass+` bg-green-500 text-black hover:bg-green-700 focus:bg-green-700 active:bg-green-800 mx-auto`}>
                 Add New Hall
           </button>
         </div>

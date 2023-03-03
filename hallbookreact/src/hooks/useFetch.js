@@ -3,17 +3,18 @@ import jwt_decode from "jwt-decode";
 import { fromUnixTime, differenceInMilliseconds } from "date-fns";
 
 let useFetch = () => {
-  let config = {};
-
   let { authTokens, setAuthTokens, setUser } = useAuth();
 
   let baseURL = "http://127.0.0.1:8000";
 
   let originalRequest = async (url, config) => {
+    console.log("config", config);
+
     url = `${baseURL}${url}`;
     let response = await fetch(url, config);
     let data = await response.json();
     console.log("response", data);
+    console.log(authTokens);
     return { response, data };
   };
 
@@ -32,7 +33,7 @@ let useFetch = () => {
     return data;
   };
 
-  let callFetch = async (url) => {
+  let callFetch = async (url, config) => {
     const user = jwt_decode(authTokens.access);
     const isExpired =
       differenceInMilliseconds(fromUnixTime(user.exp), new Date()) < 1;

@@ -35,7 +35,7 @@ export default function App() {
           </Route>
           <Route element={<PrivateRoutes isuserType="admin" />}>
             <Route path="/adminpage" element={<AdminPage />} />
-            <Route path="/createhall" element={<CreateHall />} />
+            <Route path="/adminpage/createhall" element={<CreateHall />} />
           </Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="*" element={<Error />}></Route>
