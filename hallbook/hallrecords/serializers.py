@@ -19,6 +19,7 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = ['id','bookedHall','verified_by', 'verified','event','startTime','endTime']
 
 
+
 class EventSerializer(serializers.ModelSerializer):
     """
     Serializer for the Event model.
@@ -28,6 +29,7 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = ('id', 'eventManager', 'eventName', 'eventDate', 'startTime', 'endTime', 'bookedHall', 'organizingClub', 'EventDetailFile', 'EventDetailText', 'PhoneNumber')
+        
 
     def validate(self, data):
         """
