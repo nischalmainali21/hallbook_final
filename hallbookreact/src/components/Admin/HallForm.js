@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import HallInput from "../Hall/HallInput";
 const buttonfixedclass = "buttonfixedclass";
 
-function HallForm({pageTitle,handleSubmit}) {
+function HallForm({ pageTitle, handleSubmit, formInputState }) {
   const HallFormFields = [
     {
       labelText: "Hall Name",
@@ -33,11 +33,23 @@ function HallForm({pageTitle,handleSubmit}) {
     },
   ];
 
+  // console.log(formInputState)
+
   let inputFieldsState = {};
-  HallFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
+  if (!formInputState) {
+    // console.log("value empty")
+    HallFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
+  } else {
+    // console.log("value obtained from another page");
+    inputFieldsState = { ...formInputState };
+    // console.log(inputFieldsState)
+  }
+
+  // console.log(inputFieldsState)
+  // HallFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
 
   const [inputState, setInputState] = useState(inputFieldsState);
-  console.log(inputState)
+  console.log(inputState);
 
   const handleChange = (e) => {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
