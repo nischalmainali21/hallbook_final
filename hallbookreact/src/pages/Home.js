@@ -86,7 +86,7 @@ export default function Home() {
   if (userType === "admin") {
     return <Navigate to="/adminpage" />;
   } else if (userType === "faculty") {
-    return <Navigate to="/about" />;
+    return <Navigate to="/facultypage" />;
   } else {
     return (
       <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 p-2 md:w-2/3 md:gap-8">

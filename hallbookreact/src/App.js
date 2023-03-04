@@ -32,7 +32,7 @@ export default function App() {
             <Route path="/bookhall/:hall" element={<BookHall />}></Route>
           </Route>
           <Route element={<PrivateRoutes isuserType="faculty" />}>
-            <Route path="/about" element={<About />} />
+            <Route path="/facultypage" element={<About />} />
           </Route>
           <Route element={<PrivateRoutes isuserType="admin" />}>
             <Route path="/adminpage" element={<AdminPage />} />

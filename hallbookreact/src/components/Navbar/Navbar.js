@@ -30,7 +30,7 @@ export default function Navbar() {
       : userType === "student"
       ? "/"
       : userType === "faculty"
-      ? "/about"
+      ? "/facultypage"
       : "/adminpage";
   // console.log(homePath)
 
@@ -89,7 +89,7 @@ export default function Navbar() {
                 </li>
                 <li>
                   <NavLink
-                    to="/about"
+                    to="/facultypage"
                     className={({ isActive }) =>
                       isActive
                         ? activeClassLink
@@ -213,7 +213,7 @@ export default function Navbar() {
             </li>
             <li>
               <NavLink
-                to="/about"
+                to="/facultypage"
                 onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
                   isActive

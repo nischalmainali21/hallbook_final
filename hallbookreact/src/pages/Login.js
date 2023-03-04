@@ -31,7 +31,7 @@ function Login() {
 
   //add some component to handle this
   if (user){
-    // let path = authTokens.user_type==="admin"?"/adminpage":authTokens.user_type==="faculty"?"/about":"/"
+    // let path = authTokens.user_type==="admin"?"/adminpage":authTokens.user_type==="faculty"?"/facultypage":"/"
     // navigate(path)
     return "You are already logged in.";
     
