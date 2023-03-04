@@ -12,6 +12,10 @@ let useFetch = () => {
 
     url = `${baseURL}${url}`;
     let response = await fetch(url, config);
+    console.log(response)
+    if(response.status === 204){
+      return {response}
+    }
     let data = await response.json();
     console.log("response", data);
     console.log(authTokens);

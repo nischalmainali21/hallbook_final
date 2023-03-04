@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import AdminHallCard from "../components/Admin/AdminHallCard";
+import useFetch from "../hooks/useFetch";
 
 const buttonfixedclass = `buttonfixedclass`;
 
@@ -30,23 +31,40 @@ function AdminPage() {
     getHallList()
   }, []);
 
+  let api = useFetch();
+  let deleteData = async (id) => {
+    try {
+      let { response} = await api(`/api/hall/halls/${id}/delete/`, {
+        method: "DELETE",
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
   console.log(data)
   if (loading) return "Loading";
   if (error) return "error";
+
+  
 
   const handleNewHallClick = () => {
     navigate("/adminpage/createhall");
   };
 
-  const handleEditClick = (e,id) => {
+  const handleEditClick = (id) => {
     const res = data.filter(item=> item.id === id)
     console.log(res)
     navigate('/adminpage/edithall',{state:{...res}})
     console.log("edit",id)
   }
 
-  const handleDeleteClick = (e,id) => {
+  const handleDeleteClick = (id) => {
     console.log("delete",id)
+    deleteData(id)
+    navigate(0)
   }
 
   return (
