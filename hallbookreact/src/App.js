@@ -12,12 +12,25 @@ import Unauthorized from "./pages/Unauthorized";
 import AdminPage from "./pages/AdminPage";
 import CreateHall from "./components/Admin/CreateHall";
 import EditHall from "./components/Admin/EditHall";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   return (
     <div className="App">
       <AuthProvider>
         <Navbar />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <Routes>
           <Route path="/unauthorized" element={<Unauthorized />}></Route>
 
