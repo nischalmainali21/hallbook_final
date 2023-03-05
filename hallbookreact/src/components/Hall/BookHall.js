@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DatePicker from "../Time/DatePicker";
 import TimePicker from "../Time/TimePicker";
 import HallFIle from "./HallFIle";
 import HallInput from "./HallInput";
 import HallInputFields from "./HallInputFields";
 import HallTextArea from "./HallTextArea";
+import useFetch from "../../hooks/useFetch";
+
 
 const loginBtnClass = `relative  block rounded-lg bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
@@ -14,6 +16,23 @@ focus:ring-0 active:bg-blue-800 active:shadow-lg  md:py-3`;
 
 function BookHall() {
   const { state } = useLocation();
+  const navigate = useNavigate()
+
+  let api = useFetch();
+  let submitData = async (payload) => {
+    try {
+      let { response, data } = await api("/api/hall/book_hall/", {
+        method: "POST",
+        body: payload,
+      });
+      if(response.status===400){
+        alert(response)//use a notification component here
+      }
+      // console.log(response, data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   let inputFieldsState = {};
 
@@ -25,26 +44,34 @@ function BookHall() {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
+  console.log(inputState)
+
+
+
   const handleSubmit = (e) => {
     const file = e.target.eventDetails.files[0];
 
-    const formData = new FormData();
-    formData.append("eventDate", e.target.eventDate.value);
-    formData.append("eventStartTime", e.target.eventStartTime.value);
-    formData.append("eventEndTimeDate", e.target.eventendTime.value);
-    formData.append("eventManagerName", e.target.eventManager.value);
-    formData.append("organizingClub", e.target.orgClub.value);
-    formData.append("eventName", e.target.eventName.value);
-    formData.append("email", e.target.email.value);
-    formData.append("phoneNumber", e.target.pnumber.value);
-    formData.append("eventDescription", e.target.eventDesc.value);
-    formData.append(file.name, file.type);
+    const payload = new FormData();
+    payload.append("bookedHall", state.id);
+    payload.append("eventDate", e.target.eventDate.value);
+    payload.append("startTime", e.target.eventStartTime.value);
+    payload.append("endTime", e.target.eventendTime.value);
+    payload.append("eventManager", e.target.eventManager.value);
+    payload.append("organizingClub", e.target.orgClub.value);
+    payload.append("eventName", e.target.eventName.value);
+    // payload.append("email", e.target.email.value); not added to backend
+    // payload.append("PhoneNumber", `+${e.target.pnumber.value}`);
+    payload.append("eventdetailtext", e.target.eventDesc.value);
+    // payload.append("eventdetailfile",file,file.name, file.type);
 
-    for (const [key, value] of formData) {
+    for (const [key, value] of payload) {
       console.log(key, value);
     }
 
+    submitData(payload)
+
     e.preventDefault();
+    // navigate('/')
   };
 
   return (
