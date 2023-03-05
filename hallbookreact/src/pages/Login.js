@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import LoginForm from "../components/Login/LoginForm";
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
+import { toast } from "react-toastify";
+
 
 const loginBtnClass = `relative mx-auto block w-2/6 max-w-xs rounded-full bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
@@ -24,7 +26,7 @@ function Login() {
     e.preventDefault();
     //sent to the function from authContext along with the event
     loginUser(e);
-
+    toast.success("Successfully Logged in!")
     setLoginState({ userName: "", password: "" });
 
   };
