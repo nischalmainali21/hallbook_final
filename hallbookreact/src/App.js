@@ -15,7 +15,7 @@ import EditHall from "./components/Admin/EditHall";
 
 export default function App() {
   return (
-    <div className="App">
+    <div className="App min-h-screen">
       <AuthProvider>
         <Navbar />
         <Routes>
