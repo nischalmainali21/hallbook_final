@@ -8,6 +8,8 @@ function FacultyBookingCard({
   startTime,
   endTime,
   verified,
+  handleVerifyClick,
+  handleRejectClick
 }) {
   const buttonfixedclass = `buttonfixedclass`;
 
@@ -30,12 +32,13 @@ function FacultyBookingCard({
             {verified ? "verified" : "unverified"}
           </div>
         </div>
-        
+        {verified?"":
         <div className="flex md:gap-10 ">
-          <CButton id={`verifyBooking${id}`} type="button" btnDesc="Verify" />
+          <CButton id={`verifyBooking${id}`} type="button" btnDesc="Verify" onClick={()=>handleVerifyClick(id)}/>
           <button
             id={`rejectBooking${id}`}
             type="button"
+            onClick={()=>handleRejectClick(id)}
             className={
               buttonfixedclass +
               ` bg-red-500 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800`
@@ -44,6 +47,7 @@ function FacultyBookingCard({
             Reject
           </button>
         </div>
+}
       </div>
     </div>
   );

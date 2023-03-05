@@ -49,17 +49,41 @@ export default function About() {
   useEffect(() => {
     getBookingList();
   }, []);
+
+  const handleVerifyClick = (id) => {
+    console.log("verify",id)
+  }
+
+  const handleRejectClick = (id) => {
+    console.log("Reject",id)
+  }
   console.log(data);
   if (loading) return "Loading";
   if (error) return "error";
 
   return (
     <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 rounded-lg p-2 shadow-lg md:w-2/3 md:gap-8">
-      About goes here
-      {user && <p>Hello {user.user_id}</p>}
-      {data.map((item) => (
+      {/* need to sort data according to time */}
+      {/* filter data according to verified and unverified */}
+      <div className="text-3xl font-bold text-center">Pending Bookings</div>
+      {data.filter(item=>!item.verified).map((item) => (
         <FacultyBookingCard
           key={item.id}
+          id={item.id}
+          eventID={item.event}
+          bookedHallID={item.bookedHall}
+          startTime={item.startTime}
+          endTime={item.endTime}
+          verified={item.verified}
+          handleVerifyClick={handleVerifyClick}
+          handleRejectClick={handleRejectClick}
+        />
+      ))}
+      <div className="text-3xl font-bold text-center">Verified Bookings</div>
+      {data.filter(item=>item.verified).map((item) => (
+        <FacultyBookingCard
+          key={item.id}
+          id={item.id}
           eventID={item.event}
           bookedHallID={item.bookedHall}
           startTime={item.startTime}
