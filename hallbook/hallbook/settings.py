@@ -144,7 +144,13 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'user.CustomUser'
 
 #media root
-MEDIA_ROOT = BASE_DIR/"media"
-MEDIA_ROOT = "/media/"
+MEDIA_ROOT = "BASE_DIR/media/"
+
+
+#customizing token
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=35),
+}
 
 
