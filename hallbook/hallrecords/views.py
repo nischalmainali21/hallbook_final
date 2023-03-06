@@ -167,7 +167,7 @@ class HallDelete(APIView):
 
 
 class BookingList(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     """
     View to list all bookings and create a new booking.
     """
@@ -179,12 +179,14 @@ class BookingList(APIView):
         If user is staff, return all bookings.
         If user is non-staff, return only their own bookings.
         """
-        if request.user.is_staff:
-            # For staff users, return all bookings
-            bookings = Booking.objects.all()
-        else:
-            # For non-staff users, return only their own bookings
-            bookings = Booking.objects.filter(booker=request.user)
+        # if request.user.is_staff:
+        #     # For staff users, return all bookings
+        #     bookings = Booking.objects.all()
+        # else:
+        #     # For non-staff users, return only their own bookings
+        #     bookings = Booking.objects.filter(booker=request.user)
+        
+        bookings = Booking.objects.all()
 
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
@@ -206,7 +208,7 @@ class BookingList(APIView):
 
 
 class BookingDetail(APIView):
-    permission_classes=[IsStudentUser]
+    permission_classes=[IsAuthenticated]
     """
     View to retrieve, update or delete a booking instance.
     """
