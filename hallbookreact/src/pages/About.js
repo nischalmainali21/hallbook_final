@@ -111,6 +111,8 @@ export default function About() {
     console.log("Reject",id)
   }
   console.log(data);
+  let pendingData = data.filter(item=>!item.verified)
+  let verifiedData = data.filter(item=>item.verified)
   if (loading) return "Loading";
   if (error) return "error";
 
@@ -119,6 +121,7 @@ export default function About() {
       {/* need to sort data according to time */}
       {/* filter data according to verified and unverified */}
       <div className="text-3xl font-bold text-center">Pending Bookings</div>
+      {!pendingData.length?(<div className="text-center font-bold text-cprimary-600">No pending Bookings</div>):null}
       {data.filter(item=>!item.verified).map((item) => (
         <FacultyBookingCard
           key={item.id}
@@ -132,7 +135,9 @@ export default function About() {
           handleRejectClick={handleRejectClick}
         />
       ))}
+      <hr className="h-px my-8  border-0 dark:bg-gray-100"></hr>
       <div className="text-3xl font-bold text-center">Verified Bookings</div>
+      {!verifiedData?(<div className="text-center font-bold text-cprimary-600">No verified Bookings</div>):null}
       {data.filter(item=>item.verified).map((item) => (
         <FacultyBookingCard
           key={item.id}
