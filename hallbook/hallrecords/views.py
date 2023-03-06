@@ -28,6 +28,7 @@ class BookHallAPIView(APIView):
             'bookedHall': hall.id,
             'startTime': request.data['startTime'],
             'endTime': request.data['endTime'],
+            'eventDate': request.data['eventDate'],
             'booker': request.user.id,
             'event': event.id,
             'verified': False
