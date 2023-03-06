@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
+from .customFields import NPPhoneNumberField
 
 
 User = get_user_model()
@@ -37,7 +37,7 @@ class Event(models.Model):
     organizingClub = models.CharField(max_length=255,blank=True)
     EventDetailFile = models.FileField(upload_to="eventFile/",max_length=250,null=True)
     EventDetailText = models.CharField(max_length=5000,default="Details")
-    PhoneNumber = PhoneNumberField(blank=True, unique=True)
+    PhoneNumber = NPPhoneNumberField()
     
 
 class Booking(models.Model):
@@ -50,8 +50,11 @@ class Booking(models.Model):
     endTime = models.TimeField()
     verified = models.BooleanField(default=False)
 
+
     # A booking can be verified by either the admin or the faculty member who created the event
     verified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_bookings')
 
     # A booking can only be made by a user who is either a student or a faculty member
     booker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_events',default=1)
+
+
