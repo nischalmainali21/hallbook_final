@@ -10,41 +10,37 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 import datetime
 
-
 class BookHallAPIView(APIView):
     permission_classes=[IsAuthenticated]
+
     def post(self, request, format=None):
         # Deserialize incoming data
-        serializer = EventSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        event = serializer.save()
+        event_serializer = EventSerializer(data=request.data)
+        event_serializer.is_valid(raise_exception=True)
+        event = event_serializer.save()
 
         # Create new booking object
-        hallId = int(request.data['bookedHall'])
-        hall = Hall.objects.get(id=hallId)
-        # start_time=datetime.datetime.strptime(request.data['startTime'], '%Y-%m-%d %H:%M:%S')
-        # current_datetime = datetime.datetime.now()
-        # time_difference = (current_datetime - start_time).total_seconds() / 3600
-        # if time_difference > 1:
-    
-        booking = Booking.objects.create(
-        bookedHall=hall,
-        startTime=request.data['startTime'],
-        endTime=request.data['endTime'],
-        booker=request.user,
-        event=event,
-        verified=False
-        )
+        hall_id = int(request.data['bookedHall'])
+        hall = Hall.objects.get(id=hall_id)
+        booking_serializer = BookingSerializer(data={
+            'bookedHall': hall.id,
+            'startTime': request.data['startTime'],
+            'endTime': request.data['endTime'],
+            'booker': request.user.id,
+            'event': event.id,
+            'verified': False
+        })
+        booking_serializer.is_valid(raise_exception=True)
+        booking = booking_serializer.save()
 
-        # Serialize the new booking object and return response
-        serializer = BookingSerializer(booking)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # else:
-        #     data = {
-        #     'message': 'Booking interval less than an hour',
-        #     'success': False
-        #     }
-        #     return Response(data, status=400)
+        # Serialize the new booking and event objects and return response
+        event_data = event_serializer.data
+        booking_data = booking_serializer.data
+        data = {
+            'event': event_data,
+            'booking': booking_data,
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class HallList(APIView):
@@ -246,17 +242,13 @@ class BookingDetail(APIView):
         Update a booking instance.
         """
         booking = self.get_object(pk)
-        if request.user.is_staff or booking.booker == request.user:
-            serializer = BookingSerializer(booking, data=request.data)
-            if serializer.is_valid():
-                # Set the booker to the current user
-                serializer.validated_data['booker'] = request.user
-                # Save the updated booking
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = BookingSerializer(booking, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
         else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def delete(self, request, pk):
         """
@@ -265,8 +257,5 @@ class BookingDetail(APIView):
         Delete a booking instance.
         """
         booking = self.get_object(pk)
-        if request.user.is_staff or booking.booker == request.user:
-            booking.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        booking.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
