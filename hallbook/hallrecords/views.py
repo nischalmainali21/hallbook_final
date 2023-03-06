@@ -22,7 +22,7 @@ class BookHallAPIView(APIView):
         # Create new booking object
         hallId = int(request.data['bookedHall'])
         hall = Hall.objects.get(id=hallId)
-        start_time=datetime.datetime.strptime(request.data['startTime'])
+        start_time=datetime.datetime.strptime(request.data['startTime'], '%Y-%m-%d %H:%M:%S')
         current_datetime = datetime.datetime.now()
         time_difference = (current_datetime - start_time).total_seconds() / 3600
         if time_difference > 1:
@@ -235,11 +235,9 @@ class BookingDetail(APIView):
         Retrieve a booking instance.
         """
         booking = self.get_object(pk)
-        if request.user.is_staff or booking.booker == request.user:
-            serializer = BookingSerializer(booking)
-            return Response(serializer.data)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data)
+        
 
     def put(self, request, pk):
         """
