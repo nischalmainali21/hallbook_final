@@ -88,6 +88,26 @@ export default function Navbar() {
                   </NavLink>
                 </li>
                 <li>
+              <NavLink
+                to="/studentbookings"
+                onClick={() => setIsOpen(!isOpen)}
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
+                }
+              >
+                Bookings
+              </NavLink>
+            </li>
+                <li>
                   <NavLink
                     to="/facultypage"
                     className={({ isActive }) =>
@@ -103,7 +123,7 @@ export default function Navbar() {
                           }`
                     }
                   >
-                    About
+                    Faculty
                   </NavLink>
                 </li>
                 <li>
@@ -213,6 +233,26 @@ export default function Navbar() {
             </li>
             <li>
               <NavLink
+                to="/studentbookings"
+                onClick={() => setIsOpen(!isOpen)}
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
+                }
+              >
+                Bookings
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/facultypage"
                 onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
@@ -228,7 +268,7 @@ export default function Navbar() {
                       }`
                 }
               >
-                About
+                Faculty
               </NavLink>
             </li>
             <li>

@@ -12,6 +12,7 @@ import Unauthorized from "./pages/Unauthorized";
 import AdminPage from "./pages/AdminPage";
 import CreateHall from "./components/Admin/CreateHall";
 import EditHall from "./components/Admin/EditHall";
+import StudentBookings from "./pages/StudentBookings";
 
 export default function App() {
   return (
@@ -30,6 +31,8 @@ export default function App() {
           <Route element={<PrivateRoutes isuserType="student" />}>
             <Route path="/halldetail/:hall" element={<HallDetails />}></Route>
             <Route path="/bookhall/:hall" element={<BookHall />}></Route>
+            <Route path="/studentbookings" element={<StudentBookings/>}></Route>
+          
           </Route>
           <Route element={<PrivateRoutes isuserType="faculty" />}>
             <Route path="/facultypage" element={<About />} />
