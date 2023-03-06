@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+import datetime
 
 
 class BookHallAPIView(APIView):
@@ -21,21 +22,29 @@ class BookHallAPIView(APIView):
         # Create new booking object
         hallId = int(request.data['bookedHall'])
         hall = Hall.objects.get(id=hallId)
-        
-   
-        
-        booking = Booking.objects.create(
-        bookedHall=hall,
-        startTime=request.data['startTime'],
-        endTime=request.data['endTime'],
-        booker=request.user,
-        event=event,
-        verified=False
-        )
+        start_time=datetime.datetime.strptime(request.data['startTime'])
+        current_datetime = datetime.datetime.now()
+        time_difference = (current_datetime - start_time).total_seconds() / 3600
+        if time_difference > 1:
+    
+            booking = Booking.objects.create(
+            bookedHall=hall,
+            startTime=request.data['startTime'],
+            endTime=request.data['endTime'],
+            booker=request.user,
+            event=event,
+            verified=False
+            )
 
-        # Serialize the new booking object and return response
-        serializer = BookingSerializer(booking)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Serialize the new booking object and return response
+            serializer = BookingSerializer(booking)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            data = {
+            'message': 'Booking interval less than an hour',
+            'success': False
+            }
+            return Response(data, status=400)
 
 
 class HallList(APIView):
