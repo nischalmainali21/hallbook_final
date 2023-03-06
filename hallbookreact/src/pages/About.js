@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import FacultyBookingCard from "../components/Facutly/FacultyBookingCard";
 import { useNavigate } from "react-router";
+import { async } from "q";
 
 export default function About() {
-  let { user } = useAuth();
+  let { authTokens } = useAuth();
+  console.log(authTokens.access)
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,17 +30,40 @@ export default function About() {
     }
   };
 
-  let verifyBooking = async (id,payload) => {
-    try {
-      let { response, data } = await api(`/api/hall/bookings/${id}`, {
-        method: "PUT",
-        body:payload
-      });
-      console.log(response, data);
+  // let verifyBooking = async (id,payload) => {
+  //   try {
+  //     let { response, data } = await api(`/api/hall/bookings/${id}`, {
+  //       method: "PUT",
+  //       body:payload
+  //     });
+  //     console.log(response, data);
       
-    } catch (error) {
-      console.error(error);
-      setError(error);
+  //   } catch (error) {
+  //     console.error(error);
+  //     
+  //   }
+  // }
+
+  let verifyBooking = async(id,payload) => {
+    try{
+      let response = await fetch(`http://127.0.0.1:8000/api/hall/bookings/${id}/`,{
+        method:"PUT",
+        headers:{
+          "Authorization":`Bearer ${authTokens.access}`
+        },
+        body:payload
+      })
+      let data = response.json()
+      if(response.ok){
+        console.log("successfully verified")
+      }
+      else{
+        alert(response)
+      }
+      console.log(response,data)
+    }catch(error){
+      console.error(error)
+    
     }
   }
 
@@ -79,7 +104,7 @@ export default function About() {
       console.log(key, value);
     }
     verifyBooking(id,payload)
-    // navigate('/')
+    navigate(0)
   }
 
   const handleRejectClick = (id) => {
