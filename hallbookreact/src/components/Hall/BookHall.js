@@ -60,7 +60,7 @@ function BookHall() {
     payload.append("organizingClub", e.target.orgClub.value);
     payload.append("eventName", e.target.eventName.value);
     // payload.append("email", e.target.email.value); not added to backend
-    // payload.append("PhoneNumber", `+${e.target.pnumber.value}`);
+    payload.append("PhoneNumber", e.target.pnumber.value);
     payload.append("EventDetailText", e.target.eventDesc.value);
     payload.append("EventDetailFile",file);
 
