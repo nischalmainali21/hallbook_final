@@ -28,7 +28,7 @@ class BookHallAPIView(APIView):
             'bookedHall': hall.id,
             'startTime': request.data['startTime'],
             'endTime': request.data['endTime'],
-            'booker': request.user,
+            'booker': request.user.id,
             'event': event.id,
             'verified': False
         })
@@ -42,13 +42,13 @@ class BookHallAPIView(APIView):
             'event': event_data,
             'booking': booking_data,
         }
-        send_mail(
-            'Subject of email',
-            'Body of email',
-            'from@example.com',
-            ['admin@example.com'],
-            fail_silently=False,
-        )
+        # send_mail(
+        #     'Subject of email',
+        #     'Body of email',
+        #     'from@example.com',
+        #     ['admin@example.com'],
+        #     fail_silently=False,
+        # )
         return Response(data, status=status.HTTP_201_CREATED)
 
 
