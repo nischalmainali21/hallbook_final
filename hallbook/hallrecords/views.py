@@ -22,29 +22,29 @@ class BookHallAPIView(APIView):
         # Create new booking object
         hallId = int(request.data['bookedHall'])
         hall = Hall.objects.get(id=hallId)
-        start_time=datetime.datetime.strptime(request.data['startTime'], '%Y-%m-%d %H:%M:%S')
-        current_datetime = datetime.datetime.now()
-        time_difference = (current_datetime - start_time).total_seconds() / 3600
-        if time_difference > 1:
+        # start_time=datetime.datetime.strptime(request.data['startTime'], '%Y-%m-%d %H:%M:%S')
+        # current_datetime = datetime.datetime.now()
+        # time_difference = (current_datetime - start_time).total_seconds() / 3600
+        # if time_difference > 1:
     
-            booking = Booking.objects.create(
-            bookedHall=hall,
-            startTime=request.data['startTime'],
-            endTime=request.data['endTime'],
-            booker=request.user,
-            event=event,
-            verified=False
-            )
+        booking = Booking.objects.create(
+        bookedHall=hall,
+        startTime=request.data['startTime'],
+        endTime=request.data['endTime'],
+        booker=request.user,
+        event=event,
+        verified=False
+        )
 
-            # Serialize the new booking object and return response
-            serializer = BookingSerializer(booking)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            data = {
-            'message': 'Booking interval less than an hour',
-            'success': False
-            }
-            return Response(data, status=400)
+        # Serialize the new booking object and return response
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # else:
+        #     data = {
+        #     'message': 'Booking interval less than an hour',
+        #     'success': False
+        #     }
+        #     return Response(data, status=400)
 
 
 class HallList(APIView):
