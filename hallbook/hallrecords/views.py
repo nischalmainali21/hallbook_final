@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 import datetime
 
 class BookHallAPIView(APIView):
@@ -22,11 +23,12 @@ class BookHallAPIView(APIView):
         # Create new booking object
         hall_id = int(request.data['bookedHall'])
         hall = Hall.objects.get(id=hall_id)
+        
         booking_serializer = BookingSerializer(data={
             'bookedHall': hall.id,
             'startTime': request.data['startTime'],
             'endTime': request.data['endTime'],
-            'booker': request.user.id,
+            'booker': request.user,
             'event': event.id,
             'verified': False
         })
@@ -40,6 +42,13 @@ class BookHallAPIView(APIView):
             'event': event_data,
             'booking': booking_data,
         }
+        send_mail(
+            'Subject of email',
+            'Body of email',
+            'from@example.com',
+            ['admin@example.com'],
+            fail_silently=False,
+        )
         return Response(data, status=status.HTTP_201_CREATED)
 
 
