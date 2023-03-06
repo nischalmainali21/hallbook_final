@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import HallCard from "../components/Hall/HallCard";
 import hallListOrg from "../components/Hall/HallList";
+import HallListTest from "../components/Hall/HallListTest";
 import useAuth from "../hooks/useAuth";
 // import fetchInstance from "../utils/fetchInstance"
 import useFetch from "../hooks/useFetch";
+
+
 
 //somehow works
 hallListOrg[0].bookings = {
@@ -89,6 +92,8 @@ export default function Home() {
     return <Navigate to="/facultypage" />;
   } else {
     return (
+      <>
+      <HallListTest/>
       <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 p-2 md:w-2/3 md:gap-8">
         {hallListOrg.map((hall) => (
           <HallCard
@@ -101,6 +106,7 @@ export default function Home() {
           />
         ))}
       </div>
+      </>
     );
   }
 }
