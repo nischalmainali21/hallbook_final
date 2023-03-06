@@ -130,4 +130,5 @@ dmypy.json
 .pyre/
 
 
-hallbook/BASE_DIR/media/eventFile/*
+
+hallbook/BASE_DIR/media/eventFile/
