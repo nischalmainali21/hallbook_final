@@ -33,7 +33,7 @@ class BookHallAPIView(APIView):
             'verified': False
         })
         booking_serializer.is_valid(raise_exception=True)
-        booking = booking_serializer.save()
+        booking_serializer.save()
 
         # Serialize the new booking and event objects and return response
         event_data = event_serializer.data
