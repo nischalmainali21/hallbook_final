@@ -38,6 +38,7 @@ class Event(models.Model):
     EventDetailFile = models.FileField(upload_to="eventFile/",max_length=250,null=True)
     EventDetailText = models.CharField(max_length=5000,default="Details")
     PhoneNumber = NPPhoneNumberField()
+
     
 
 class Booking(models.Model):
@@ -49,12 +50,12 @@ class Booking(models.Model):
     startTime = models.TimeField()
     endTime = models.TimeField()
     verified = models.BooleanField(default=False)
-
+    booker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings', default=1)
 
     # A booking can be verified by either the admin or the faculty member who created the event
     verified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_bookings')
 
-    # A booking can only be made by a user who is either a student or a faculty member
-    booker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_events',default=1)
+
+   
 
 

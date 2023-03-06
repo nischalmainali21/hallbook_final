@@ -16,7 +16,7 @@ class HallSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['id','bookedHall','verified_by', 'verified','event','startTime','endTime']
+        fields = ['id','bookedHall','verified_by', 'verified','event','startTime','endTime','booker']
 
 
 
