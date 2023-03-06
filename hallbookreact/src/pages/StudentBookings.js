@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import useFetch from "../hooks/useFetch";
 
 import useAuth from "../hooks/useAuth";
+import StudentBookingCard from "../components/Student/StudentBookingCard";
 
 function StudentBookings() {
   let { user } = useAuth();
@@ -37,6 +38,13 @@ function StudentBookings() {
     getBookingList();
   }, []);
 
+  function handleEditClick(id) {
+    console.log("edit", id);
+  }
+  function handleCancelClick(id) {
+    console.log("cancel", id);
+  }
+
   let pendingData = data.filter((item) => !item.verified);
   let verifiedData = data.filter((item) => item.verified);
   console.log("pending", pendingData);
@@ -50,7 +58,19 @@ function StudentBookings() {
       <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 rounded-lg p-2 shadow-lg md:w-2/3 md:gap-8">
         <div className="text-center text-3xl font-bold">Pending Bookings</div>
         {pendingData.length ? (
-          pendingData.map((item) => <p>{item.id}</p>)
+          pendingData.map((item) => (
+            <StudentBookingCard
+              key={item.id}
+              id={item.id}
+              eventID={item.event}
+              bookedHallID={item.bookedHall}
+              startTime={item.startTime}
+              endTime={item.endTime}
+              verified={item.verified}
+              handleCancelClick={handleCancelClick}
+              handleEditClick={handleEditClick}
+            />
+          ))
         ) : (
           <div className="text-center font-bold text-cprimary-600">
             No Pending Bookings
@@ -59,7 +79,18 @@ function StudentBookings() {
         <hr className="my-8 h-px  border-0 dark:bg-gray-100"></hr>
         <div className="text-center text-3xl font-bold">Verified Bookings</div>
         {verifiedData.length ? (
-          verifiedData.map((item) => <p>{item.id}</p>)
+          verifiedData.map((item) => (
+            <StudentBookingCard
+              key={item.id}
+              id={item.id}
+              eventID={item.event}
+              bookedHallID={item.bookedHall}
+              startTime={item.startTime}
+              endTime={item.endTime}
+              verified={item.verified}
+              handleCancelClick={handleCancelClick}
+            />
+          ))
         ) : (
           <div className="text-center font-bold text-cprimary-600">
             No Past Bookings
