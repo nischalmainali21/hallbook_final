@@ -2,12 +2,14 @@ import useAuth from "../hooks/useAuth";
 import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import FacultyBookingCard from "../components/Facutly/FacultyBookingCard";
+import { useNavigate } from "react-router";
 
 export default function About() {
   let { user } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   let api = useFetch();
   let getBookingList = async () => {
@@ -25,6 +27,20 @@ export default function About() {
       setError(error);
     }
   };
+
+  let verifyBooking = async (id,payload) => {
+    try {
+      let { response, data } = await api(`/api/hall/bookings/${id}`, {
+        method: "PUT",
+        body:payload
+      });
+      console.log(response, data);
+      
+    } catch (error) {
+      console.error(error);
+      setError(error);
+    }
+  }
 
   //   useEffect(() => {
   //     let getBookingList = async () => {
@@ -50,8 +66,20 @@ export default function About() {
     getBookingList();
   }, []);
 
-  const handleVerifyClick = (id) => {
-    console.log("verify",id)
+  const handleVerifyClick = (id,bookedHallID,eventID,startTime,endTime) => {
+    console.log("verify",id,bookedHallID,eventID,startTime,endTime)
+    const payload = new FormData()
+    payload.append("bookedHall",bookedHallID)
+    payload.append("verified",true)
+    payload.append("event",eventID)
+    payload.append("startTime",startTime)
+    payload.append("endTime",endTime)
+
+    for (const [key, value] of payload) {
+      console.log(key, value);
+    }
+    verifyBooking(id,payload)
+    // navigate('/')
   }
 
   const handleRejectClick = (id) => {

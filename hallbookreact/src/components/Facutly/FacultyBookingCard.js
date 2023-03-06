@@ -3,6 +3,7 @@ import CButton from "../CButton";
 import useFetch from "../../hooks/useFetch";
 import { useState } from "react";
 
+
 function FacultyBookingCard({
   id,
   eventID,
@@ -25,13 +26,13 @@ function FacultyBookingCard({
       if (response.ok) {
         setBookedHallName(data.hallName)
       }
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error(error);
     }
   };
   getHallData()
-  console.log(bookedHallName)
+  // console.log(bookedHallName)
 
   return (
     <div>
@@ -59,7 +60,7 @@ function FacultyBookingCard({
               id={`verifyBooking${id}`}
               type="button"
               btnDesc="Verify"
-              onClick={() => handleVerifyClick(id)}
+              onClick={() => handleVerifyClick(id,bookedHallID,eventID,startTime,endTime)}
             />
             <button
               id={`rejectBooking${id}`}

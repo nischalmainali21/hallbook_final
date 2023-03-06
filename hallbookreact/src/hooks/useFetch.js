@@ -17,15 +17,15 @@ let useFetch = () => {
       return {response}
     }
     let data = await response.json();
-    console.log("response", data);
-    console.log(authTokens);
-    console.log(authTokens.refresh)
+    // console.log("response", data);
+    // console.log(authTokens);
+    // console.log(authTokens.refresh)
     return { response, data };
   };
 
   let refreshToken = async (authTokens) => {
-    console.log("entered refreshToken")
-    console.log("authTokens.refresh",authTokens.refresh)
+    // console.log("entered refreshToken")
+    // console.log("authTokens.refresh",authTokens.refresh)
     let response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
       method: "POST",
       headers: {
@@ -34,10 +34,10 @@ let useFetch = () => {
       body: JSON.stringify({ refresh: authTokens.refresh }),
     });
     let data = await response.json();
-    console.log('data that is repsonse from refresh token',data)
+    // console.log('data that is repsonse from refresh token',data)
     localStorage.setItem("authTokens", JSON.stringify({...authTokens,access:data.access}));
     setAuthTokens({...authTokens,access:data.access});
-    console.log(authTokens.user_type)
+    // console.log(authTokens.user_type)
     setUser(jwt_decode(data.access));
     return data;
   };
