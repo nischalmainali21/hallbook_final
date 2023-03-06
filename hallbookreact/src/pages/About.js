@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import FacultyBookingCard from "../components/Facutly/FacultyBookingCard";
 import { useNavigate } from "react-router";
-import { async } from "q";
+
 
 export default function About() {
   let { authTokens } = useAuth();
