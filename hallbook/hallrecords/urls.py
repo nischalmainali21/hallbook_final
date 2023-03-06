@@ -8,7 +8,9 @@ from .views import(
     HallList,
     HallUpdate,
     BookingList,
-    BookingDetail
+    BookingDetail,
+    EventDetail,
+    EventList
 )
 
 
@@ -23,5 +25,7 @@ urlpatterns = [
     path('halls/<int:pk>/delete/', HallDelete.as_view(), name='hall-delete'),
     path('bookings/', BookingList.as_view(), name='booking-list'),
     path('bookings/<int:pk>/', BookingDetail.as_view(), name='booking-detail'),
+    path('events/<int:pk>/',EventDetail.as_view(),name='event-detail'),
+    path('events/', EventList.as_view(), name='event-list'),
 ]
 

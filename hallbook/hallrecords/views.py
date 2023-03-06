@@ -1,4 +1,4 @@
-from .models import Hall, Booking
+from .models import Hall, Booking, Event
 from rest_framework import status
 from .serializers import HallSerializer, EventSerializer, BookingSerializer
 from rest_framework import viewsets
@@ -50,6 +50,75 @@ class BookHallAPIView(APIView):
         #     fail_silently=False,
         # )
         return Response(data, status=status.HTTP_201_CREATED)
+    
+    
+
+class EventDetail(APIView):
+    permission_classes=[IsAuthenticated]
+    """
+    View to retrieve, update or delete an event instance.
+    """
+
+    def get_object(self, pk):
+        """
+        Helper method to get the event instance with the given primary key.
+        """
+        return get_object_or_404(Event, pk=pk)
+
+    def get(self, request, pk):
+        """
+        GET request handler for eventDetail view.
+
+        Retrieve an event instance.
+        """
+        event = self.get_object(pk)
+        serializer = EventSerializer(event)
+        return Response(serializer.data)
+        
+
+    def put(self, request, pk):
+        """
+        PUT request handler for eventDetail view.
+
+        Update an event instance.
+        """
+        event = self.get_object(pk)
+        serializer = EventSerializer(event,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, pk):
+        """
+        DELETE request handler for EventDetail view.
+
+        Delete an event instance.
+        """
+        event = self.get_object(pk)
+        event.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class EventList(APIView):
+    permission_classes = [IsAuthenticated]
+    """
+    View to list all events.
+    """
+
+    def get(self, request):
+        """
+        GET request handler for EventList view.
+        """
+        
+        event = Event.objects.all()
+
+        serializer = EventSerializer(event, many=True)
+        return Response(serializer.data)
+
+
 
 
 class HallList(APIView):
