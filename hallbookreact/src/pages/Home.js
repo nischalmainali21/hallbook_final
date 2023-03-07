@@ -6,8 +6,7 @@ import HallListTest from "../components/Hall/HallListTest";
 import useAuth from "../hooks/useAuth";
 // import fetchInstance from "../utils/fetchInstance"
 import useFetch from "../hooks/useFetch";
-
-
+const { format } = require("date-fns");
 
 //somehow works
 hallListOrg[0].bookings = {
@@ -41,10 +40,121 @@ hallListOrg[1].bookings = {
 
 export default function Home() {
   const [data, setData] = useState(null);
+  const [hallData, setHallData] = useState([]);
+  const [bookingData, setBookingData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const { authTokens } = useAuth();
+
+  let api = useFetch();
+  let getBookingList = async () => {
+    try {
+      let { response, data } = await api("/api/hall/bookings/", {
+        method: "GET",
+      });
+      //   console.log(response, data);
+      if (response.ok) {
+        setBookingData(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //function to add bookings for the incoming hallData
+  function addBookings(hallList) {
+    console.log("add bookings entered");
+    const bookings = {};
+    const today = new Date();
+    for (let i = 0; i <= 10; i++) {
+      const date = new Date(today.getTime() + i * 24 * 3600 * 1000);
+      bookings[date.toISOString().slice(0, 10)] = {};
+    }
+    for (const hall of hallList) {
+      console.log(hall);
+      hall.bookings = bookings;
+    }
+    return hallList;
+  }
+
+  function findInterval(startTime, endTime) {
+    const startHour = format(new Date(`2000-01-01T${startTime}`), "HH:mm");
+    const endHour = format(new Date(`2000-01-01T${endTime}`), "HH:mm");
+
+    const interval = `${startHour}-${endHour}`;
+    return interval;
+  }
+
+  function findBookings(hallList, bookingList) {
+    hallList.forEach((item) => {
+      let filteredbookingList = bookingList.filter(
+        (booking) => booking.bookedHall === item.id
+      );
+      console.log("filteredbookingList", filteredbookingList);
+      filteredbookingList.forEach((booking) => {
+        let {
+          startTime,
+          endTime,
+          verified,
+          event,
+          eventDate,
+          booker,
+          bookedHall,
+        } = booking;
+        console.log(
+          "🚀 ~ file: HallListTest.js:51 ~ findBookings ~ startTime,endTime,verified,event:",
+          startTime,
+          endTime,
+          verified,
+          event
+        );
+        //form a object of event and verified
+        let bookingDetail = {
+          userID: booker,
+          eventID: event,
+          isVerified: verified,
+        };
+        console.log("bookingDetail", bookingDetail);
+        //convert the startTime and endTime into intervals of format '12:00-13:00'
+        let intervalString = findInterval(startTime, endTime);
+        console.log(intervalString);
+        let bookingObject = {
+          [intervalString]: bookingDetail,
+        };
+        console.log(bookingObject);
+        //find the date of the booking
+        console.log("evetndate", eventDate);
+
+        const index = hallData.findIndex((hall) => hall.id === bookedHall);
+        console.log(
+          "🚀 ~ file: HallListTest.js:114 ~ filteredbookingList.forEach ~ index:",
+          index
+        );
+        if(index !== -1){
+          const existingBookings = hallData[index].bookings[eventDate] || {};
+          const newBookings = {...existingBookings,[intervalString]:bookingDetail}
+          console.log(newBookings)
+          hallData[index].bookings = {
+            ...hallData[index].bookings,
+             [eventDate]: newBookings,
+            
+          };
+        }
+
+        // let tempeventDateobj = hallData[index].bookings[eventDate]
+        // console.log("🚀 ~ file: Home.js:135 ~ filteredbookingList.forEach ~ tempeventDateobj:", tempeventDateobj)
+        
+        // hallData[index].bookings = {
+        //   ...hallData[index].bookings,
+        //   // [eventDate]: {bookingObject},
+        //   [eventDate] :{bookingObject,...hallData[index].bookings[eventDate]}
+        // };
+        
+
+        console.log(hallData);
+      });
+    });
+  }
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/hall/halls/")
@@ -56,6 +166,8 @@ export default function Home() {
       })
       .then((data) => {
         setData(data);
+        let newHallData = addBookings(data);
+        setHallData(newHallData);
       })
       .catch((error) => {
         console.error("Error fetching data:,", error);
@@ -64,7 +176,12 @@ export default function Home() {
       .finally(() => {
         setLoading(false);
       });
+    getBookingList();
   }, []);
+
+  console.log("hallData", hallData);
+  console.log("bookingData", bookingData);
+  findBookings(hallData, bookingData);
 
   // let api = useFetch()
   // let getHallList = async() => {
@@ -93,19 +210,19 @@ export default function Home() {
   } else {
     return (
       <>
-      <HallListTest/>
-      <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 p-2 md:w-2/3 md:gap-8">
-        {hallListOrg.map((hall) => (
-          <HallCard
-            key={hall.id}
-            id={hall.id}
-            name={hall.name}
-            capacity={hall.capacity}
-            slides={hall.slides}
-            bookings={hall.bookings}
-          />
-        ))}
-      </div>
+        {/* <HallListTest/> */}
+        <div className="mx-auto mt-10 flex min-h-screen max-w-4xl flex-col gap-12 p-2 md:w-2/3 md:gap-8">
+          {hallListOrg.map((hall) => (
+            <HallCard
+              key={hall.id}
+              id={hall.id}
+              name={hall.name}
+              capacity={hall.capacity}
+              slides={hall.slides}
+              bookings={hall.bookings}
+            />
+          ))}
+        </div>
       </>
     );
   }
