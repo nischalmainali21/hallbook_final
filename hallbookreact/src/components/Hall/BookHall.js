@@ -97,6 +97,7 @@ function BookHall({handleEditSubmit,formInputState}) {
           <DatePicker
           spanText="Event Date:"
           customDivClass="my-6 max-w-[420px]"
+          customDateState={formInputState?.eventDate}
           />
           {/* date input ends here */}
 

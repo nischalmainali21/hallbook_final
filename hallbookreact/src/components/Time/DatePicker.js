@@ -60,8 +60,15 @@ function checkDateValidity(date) {
   }
 }
 
-function DatePicker({spanText,customDivClass}) {
-  const [date, setDate] = useState(minDate());
+function DatePicker({spanText,customDivClass,customDateState}) {
+  let customDateVal
+  if(!customDateState){
+    customDateVal=minDate()
+  }
+  else{
+    customDateVal = customDateState
+  }
+  const [date, setDate] = useState(customDateVal);
   const [dateValid, setDateValid] = useState(true);
 
   const handleChange = (e) => {
