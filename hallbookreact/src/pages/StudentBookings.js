@@ -15,26 +15,27 @@ function StudentBookings() {
   const navigate = useNavigate();
 
   let api = useFetch();
-  let getBookingList = async () => {
-    try {
-      let { response, data } = await api("/api/hall/bookings/", {
-        method: "GET",
-      });
-      //   console.log(response, data);
-      if (response.ok) {
-        let filterData = data.filter((item) => item.booker === user.user_id);
-        console.log("filterData", filterData);
-        setData(filterData);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error(error);
-      setError(error);
-    }
-  };
+  
   console.log(data);
 
   useEffect(() => {
+    let getBookingList = async () => {
+      try {
+        let { response, data } = await api("/api/hall/bookings/", {
+          method: "GET",
+        });
+        //   console.log(response, data);
+        if (response.ok) {
+          let filterData = data.filter((item) => item.booker === user.user_id);
+          console.log("filterData", filterData);
+          setData(filterData);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+        setError(error);
+      }
+    };
     getBookingList();
   }, []);
 
@@ -66,6 +67,7 @@ function StudentBookings() {
               bookedHallID={item.bookedHall}
               startTime={item.startTime}
               endTime={item.endTime}
+              eventDate={item.eventDate}
               verified={item.verified}
               handleCancelClick={handleCancelClick}
               handleEditClick={handleEditClick}
@@ -87,6 +89,7 @@ function StudentBookings() {
               bookedHallID={item.bookedHall}
               startTime={item.startTime}
               endTime={item.endTime}
+              eventDate={item.eventDate}
               verified={item.verified}
               handleCancelClick={handleCancelClick}
             />

@@ -13,21 +13,7 @@ export default function About() {
   const navigate = useNavigate();
 
   let api = useFetch();
-  let getBookingList = async () => {
-    try {
-      let { response, data } = await api("/api/hall/bookings/", {
-        method: "GET",
-      });
-      //   console.log(response, data);
-      if (response.ok) {
-        setData(data);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error(error);
-      setError(error);
-    }
-  };
+  
 
   // let verifyBooking = async (id,payload) => {
   //   try {
@@ -89,8 +75,23 @@ export default function About() {
   //   }, [])
 
   useEffect(() => {
+    let getBookingList = async () => {
+      try {
+        let { response, data } = await api("/api/hall/bookings/", {
+          method: "GET",
+        });
+        //   console.log(response, data);
+        if (response.ok) {
+          setData(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+        setError(error);
+      }
+    };
     getBookingList();
-  }, []);
+  },[]);
 
   const handleVerifyClick = (
     id,
