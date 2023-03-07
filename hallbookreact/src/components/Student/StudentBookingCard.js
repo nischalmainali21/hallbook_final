@@ -86,15 +86,15 @@ function StudentBookingCard({
         <div className="flex md:gap-10 ">
           {verified ? null : (
             <CButton
-              id={`verifyBooking${id}`}
+              id={`editBooking${id}`}
               type="button"
               btnDesc="Edit"
               //   onClick={() => handleVerifyClick(id,bookedHallID,eventID,startTime,endTime)}
-              onClick={() => handleEditClick(id)}
+              onClick={() => handleEditClick(id,eventID)}
             />
           )}
           <button
-            id={`rejectBooking${id}`}
+            id={`cancelBooking${id}`}
             type="button"
             //   onClick={() => handleRejectClick(id)}
             onClick={() => handleCancelClick(id)}

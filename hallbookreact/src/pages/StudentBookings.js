@@ -39,8 +39,22 @@ function StudentBookings() {
     getBookingList();
   }, []);
 
-  function handleEditClick(id) {
+  function handleEditClick(id,eventID) {
     console.log("edit", id);
+    let getEventData = async (eventID) => {
+      try {
+        let {response,data} = await api(`/api/hall/events/${eventID}/`,{
+          method:"GET",
+        })
+        if(response.ok){
+          console.log(data)
+          // navigate('/studentbookings/editbooking',{state:{...data}})
+        }
+      }catch(error){
+        console.error(error)
+      }
+    }
+    getEventData(eventID)
   }
   function handleCancelClick(id) {
     console.log("cancel", id);
