@@ -1,7 +1,7 @@
+
 from .models import Hall, Booking, Event
-from rest_framework import status
+from rest_framework import status,serializers
 from .serializers import HallSerializer, EventSerializer, BookingSerializer
-from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,20 +9,24 @@ from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
-import datetime
 
 class BookHallAPIView(APIView):
     permission_classes=[IsAuthenticated]
 
     def post(self, request, format=None):
         # Deserialize incoming data
-        event_serializer = EventSerializer(data=request.data)
+        event_serializer = EventSerializer(data=request.data, context={'request': request, 'view': self})
         event_serializer.is_valid(raise_exception=True)
+        
+        hall_id = int(request.data['bookedHall'])
+        hall = Hall.objects.get(id=hall_id)
+        if not hall.is_available(request.data['startTime'], request.data['endTime'],request.data['eventDate']):
+            raise serializers.ValidationError('Hall is already booked for this time period.')
+
         event = event_serializer.save()
 
         # Create new booking object
-        hall_id = int(request.data['bookedHall'])
-        hall = Hall.objects.get(id=hall_id)
+       
         
         booking_serializer = BookingSerializer(data={
             'bookedHall': hall.id,
@@ -53,52 +57,53 @@ class BookHallAPIView(APIView):
         return Response(data, status=status.HTTP_201_CREATED)
     
     
-
 class EventDetail(APIView):
-    permission_classes=[IsAuthenticated]
-    """
-    View to retrieve, update or delete an event instance.
-    """
-
+    permission_classes = [IsAuthenticated]
+    
     def get_object(self, pk):
         """
-        Helper method to get the event instance with the given primary key.
+        Helper method to get the Event object for a given primary key.
+        Raises a Http404 exception if the object doesn't exist.
         """
-        return get_object_or_404(Event, pk=pk)
+        try:
+            return Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
 
-    def get(self, request, pk):
+    def get(self, request, pk, format=None):
         """
-        GET request handler for eventDetail view.
-
-        Retrieve an event instance.
+        Retrieve a single Event object by its primary key.
         """
         event = self.get_object(pk)
         serializer = EventSerializer(event)
         return Response(serializer.data)
-        
 
-    def put(self, request, pk):
+    def put(self, request, pk, format=None):
         """
-        PUT request handler for eventDetail view.
-
-        Update an event instance.
+        Update an existing Event object by its primary key.
         """
         event = self.get_object(pk)
-        serializer = EventSerializer(event,data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = EventSerializer(event, data=request.data, context={'request': request, 'view': self})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
+        # Update bookings associated with the event
+        bookings = Booking.objects.filter(event=event)
+        for booking in bookings:
+            booking_serializer = BookingSerializer(booking, data=request.data, partial=True)
+            booking_serializer.is_valid(raise_exception=True)
+            booking_serializer.save()
 
-    def delete(self, request, pk):
+        return Response(serializer.data)
+
+    def delete(self, request, pk, format=None):
         """
-        DELETE request handler for EventDetail view.
-
-        Delete an event instance.
+        Delete an existing Event object by its primary key.
         """
         event = self.get_object(pk)
+        # Delete associated bookings first
+        bookings = Booking.objects.filter(event=event)
+        bookings.delete()
         event.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
