@@ -10,6 +10,7 @@ function FacultyBookingCard({
   bookedHallID,
   startTime,
   endTime,
+  eventDate,
   verified,
   handleVerifyClick,
   handleRejectClick,
@@ -60,7 +61,7 @@ function FacultyBookingCard({
               id={`verifyBooking${id}`}
               type="button"
               btnDesc="Verify"
-              onClick={() => handleVerifyClick(id,bookedHallID,eventID,startTime,endTime)}
+              onClick={() => handleVerifyClick(id,bookedHallID,eventID,startTime,endTime,eventDate)}
             />
             <button
               id={`rejectBooking${id}`}
