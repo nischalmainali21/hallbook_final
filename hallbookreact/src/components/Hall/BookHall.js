@@ -34,12 +34,13 @@ function BookHall({handleEditSubmit,formInputState}) {
     }
   };
   console.log(formInputState)
-
+  
   let inputFieldsState = {};
   if(!formInputState){
     HallInputFields.forEach((hallField) => (inputFieldsState[hallField.id] = ""));
   }
   else{
+    
     let {eventManager,orgClub,eventName,pnumber} = formInputState
     inputFieldsState={eventManager,orgClub,eventName,pnumber,email:""}
   }
@@ -89,8 +90,8 @@ function BookHall({handleEditSubmit,formInputState}) {
   return (
     <>
       <div className="mx-auto mt-6 min-h-screen w-full max-w-3xl p-4 shadow-lg">
-        <div className="text-3xl font-bold">{state.name}</div>
-        <div className="text-sm text-gray-500">Capacity: {state.capacity}</div>
+        <div className="text-3xl font-bold">{!formInputState?state.name:formInputState.hallName}</div>
+        <div className="text-sm text-gray-500">Capacity: {!formInputState?state.capacity:formInputState.capacity}</div>
         <form onSubmit={formHandleSubmit}>
           {/* date input  */}
           <DatePicker
@@ -128,7 +129,9 @@ function BookHall({handleEditSubmit,formInputState}) {
           {/* ends here */}
 
           {/* brief event description */}
-          <HallTextArea />
+          <HallTextArea
+          textInputState={formInputState?.eventDesc}
+          />
 
           <HallFIle />
 
