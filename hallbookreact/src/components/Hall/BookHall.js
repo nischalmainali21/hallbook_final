@@ -24,6 +24,10 @@ function BookHall({ handleEditSubmit, formInputState }) {
         method: "POST",
         body: payload,
       });
+      if(response.ok){
+        console.log("successfully booked")
+        navigate("/studentbookings")
+      }
       if (response.status === 400) {
         alert(response); //use a notification component here
       }
