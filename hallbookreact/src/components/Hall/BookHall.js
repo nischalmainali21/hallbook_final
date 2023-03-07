@@ -8,15 +8,14 @@ import HallInputFields from "./HallInputFields";
 import HallTextArea from "./HallTextArea";
 import useFetch from "../../hooks/useFetch";
 
-
 const loginBtnClass = `relative  block rounded-lg bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg  md:py-3`;
 
-function BookHall({handleEditSubmit,formInputState}) {
+function BookHall({ handleEditSubmit, formInputState }) {
   const { state } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   let api = useFetch();
   let submitData = async (payload) => {
@@ -25,24 +24,24 @@ function BookHall({handleEditSubmit,formInputState}) {
         method: "POST",
         body: payload,
       });
-      if(response.status===400){
-        alert(response)//use a notification component here
+      if (response.status === 400) {
+        alert(response); //use a notification component here
       }
       // console.log(response, data);
     } catch (error) {
       console.error(error);
     }
   };
-  console.log(formInputState)
-  
+  console.log(formInputState);
+
   let inputFieldsState = {};
-  if(!formInputState){
-    HallInputFields.forEach((hallField) => (inputFieldsState[hallField.id] = ""));
-  }
-  else{
-    
-    let {eventManager,orgClub,eventName,pnumber} = formInputState
-    inputFieldsState={eventManager,orgClub,eventName,pnumber,email:""}
+  if (!formInputState) {
+    HallInputFields.forEach(
+      (hallField) => (inputFieldsState[hallField.id] = "")
+    );
+  } else {
+    let { eventManager, orgClub, eventName, pnumber } = formInputState;
+    inputFieldsState = { eventManager, orgClub, eventName, pnumber, email: "" };
   }
 
   const [inputState, setInputState] = useState(inputFieldsState);
@@ -51,7 +50,7 @@ function BookHall({handleEditSubmit,formInputState}) {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
-  console.log(inputState)
+  console.log(inputState);
 
   let formHandleSubmit;
 
@@ -69,40 +68,47 @@ function BookHall({handleEditSubmit,formInputState}) {
     // payload.append("email", e.target.email.value); not added to backend
     payload.append("PhoneNumber", e.target.pnumber.value);
     payload.append("EventDetailText", e.target.eventDesc.value);
-    payload.append("EventDetailFile",file);
+    payload.append("EventDetailFile", file);
 
     for (const [key, value] of payload) {
       console.log(key, value);
     }
 
-    submitData(payload)
+    submitData(payload);
 
     e.preventDefault();
     // navigate('/')
   };
 
-  if(!formInputState){
-     formHandleSubmit = handleSubmit
-  }else{
-     formHandleSubmit = handleEditSubmit
+  if (!formInputState) {
+    formHandleSubmit = handleSubmit;
+  } else {
+    formHandleSubmit = handleEditSubmit;
   }
 
   return (
     <>
       <div className="mx-auto mt-6 min-h-screen w-full max-w-3xl p-4 shadow-lg">
-        <div className="text-3xl font-bold">{!formInputState?state.name:formInputState.hallName}</div>
-        <div className="text-sm text-gray-500">Capacity: {!formInputState?state.capacity:formInputState.capacity}</div>
+        <div className="text-3xl font-bold">
+          {!formInputState ? state.name : formInputState.hallName}
+        </div>
+        <div className="text-sm text-gray-500">
+          Capacity: {!formInputState ? state.capacity : formInputState.capacity}
+        </div>
         <form onSubmit={formHandleSubmit}>
           {/* date input  */}
           <DatePicker
-          spanText="Event Date:"
-          customDivClass="my-6 max-w-[420px]"
-          customDateState={formInputState?.eventDate}
+            spanText="Event Date:"
+            customDivClass="my-6 max-w-[420px]"
+            customDateState={formInputState?.eventDate}
           />
           {/* date input ends here */}
 
           {/*  time input */}
-          <TimePicker></TimePicker>
+          <TimePicker
+            customStartTimeState={formInputState?.eventStartTime}
+            customEndTimeState={formInputState?.eventendTime}
+          ></TimePicker>
           {/* time input ends here */}
 
           {/* event manager,organizing club,event name,email,phone number */}
@@ -130,9 +136,7 @@ function BookHall({handleEditSubmit,formInputState}) {
           {/* ends here */}
 
           {/* brief event description */}
-          <HallTextArea
-          textInputState={formInputState?.eventDesc}
-          />
+          <HallTextArea textInputState={formInputState?.eventDesc} />
 
           <HallFIle />
 
