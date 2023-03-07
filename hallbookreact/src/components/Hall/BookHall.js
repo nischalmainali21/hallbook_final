@@ -85,6 +85,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
   } else {
     formHandleSubmit = handleEditSubmit;
   }
+  console.log(formInputState?.EventDetailFile);
 
   return (
     <>
@@ -141,7 +142,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
           <HallFIle />
 
           <button className={loginBtnClass} type="submit">
-            Submit
+            {!formInputState?"Book Hall":"Confirm Edit"}
           </button>
         </form>
       </div>
