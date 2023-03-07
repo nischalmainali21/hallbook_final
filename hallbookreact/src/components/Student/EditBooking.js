@@ -62,22 +62,30 @@ function EditBooking() {
     eventManager: eventManager,
     eventName: eventName,
     eventDate: eventDate,
-    startTime: startTime,
-    endTime: endTime,
+    eventStartTime: startTime,
+    eventendTime: endTime,
     bookedHall: 1,
-    organizingClub: organizingClub,
+    orgClub: organizingClub,
     EventDetailFile: EventDetailFile,
-    EventDetailText: EventDetailText,
-    PhoneNumber: PhoneNumber,
+    eventDesc: EventDetailText,
+    pnumber: PhoneNumber,
     hallName:bookedHallData.hallName,
     capacity:bookedHallData.capacity,
   };
   console.log(formInputState)
 
+  function handleSubmit(e){
+    console.log("submit")
+    e.preventDefault()
+  }
+
   return(
     <>
     <div>
-        <BookHall/>
+        <BookHall
+        formInputState={formInputState}
+        handleEditSubmit={handleSubmit}
+        />
     </div>
     </>
   );

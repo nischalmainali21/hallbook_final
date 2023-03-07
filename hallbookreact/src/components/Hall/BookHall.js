@@ -14,7 +14,7 @@ font-medium uppercase leading-tight text-white shadow-md  transition duration-15
 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
 focus:ring-0 active:bg-blue-800 active:shadow-lg  md:py-3`;
 
-function BookHall() {
+function BookHall({handleEditSubmit,formInputState}) {
   const { state } = useLocation();
   const navigate = useNavigate()
 
@@ -33,10 +33,16 @@ function BookHall() {
       console.error(error);
     }
   };
+  console.log(formInputState)
 
   let inputFieldsState = {};
-
-  HallInputFields.forEach((hallField) => (inputFieldsState[hallField.id] = ""));
+  if(!formInputState){
+    HallInputFields.forEach((hallField) => (inputFieldsState[hallField.id] = ""));
+  }
+  else{
+    let {eventManager,orgClub,eventName,pnumber} = formInputState
+    inputFieldsState={eventManager,orgClub,eventName,pnumber,email:""}
+  }
 
   const [inputState, setInputState] = useState(inputFieldsState);
 
