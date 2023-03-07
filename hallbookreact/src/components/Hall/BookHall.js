@@ -52,7 +52,7 @@ function BookHall({handleEditSubmit,formInputState}) {
 
   console.log(inputState)
 
-
+  let formHandleSubmit;
 
   const handleSubmit = (e) => {
     const file = e.target.eventDetails.files[0];
@@ -80,12 +80,18 @@ function BookHall({handleEditSubmit,formInputState}) {
     // navigate('/')
   };
 
+  if(!formInputState){
+     formHandleSubmit = handleSubmit
+  }else{
+     formHandleSubmit = handleEditSubmit
+  }
+
   return (
     <>
       <div className="mx-auto mt-6 min-h-screen w-full max-w-3xl p-4 shadow-lg">
         <div className="text-3xl font-bold">{state.name}</div>
         <div className="text-sm text-gray-500">Capacity: {state.capacity}</div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={formHandleSubmit}>
           {/* date input  */}
           <DatePicker
           spanText="Event Date:"
