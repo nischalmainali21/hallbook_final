@@ -48,7 +48,7 @@ function StudentBookings() {
         })
         if(response.ok){
           console.log(data)
-          // navigate('/studentbookings/editbooking',{state:{...data}})
+          navigate('/studentbookings/editbooking',{state:{...data}})
         }
       }catch(error){
         console.error(error)
