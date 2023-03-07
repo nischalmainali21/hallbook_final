@@ -168,6 +168,7 @@ export default function About() {
             startTime={item.startTime}
             endTime={item.endTime}
             verified={item.verified}
+            eventDate={item.eventDate}
           />
         ))}
     </div>
