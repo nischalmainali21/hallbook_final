@@ -47,12 +47,22 @@ module.exports = {
             opacity: "1",
           },
         },
+        "color-change-2x": {
+          "0%": {
+            background: "#19dcea",
+          },
+          to: {
+            background: "#b22cff",
+          },
+        },
       },
       animation: {
         bounceleft: "bounceleft 0.25s ease-in-out .5s",
         slideTop: "slideTop 0.5s ease-in-out",
         "focus-in-expand":
           "focus-in-expand 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both",
+        "color-change-2x":
+          "color-change-2x 3s cubic-bezier(1.000, 0.000, 0.000, 1.000)  infinite alternate both",
       },
     },
   },
