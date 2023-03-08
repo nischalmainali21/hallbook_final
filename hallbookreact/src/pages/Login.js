@@ -40,7 +40,7 @@ function Login() {
   } 
 
   return (
-    <div className=" min-h-screen">
+    <div>
       {/* header part containing the logo and the name */}
       <div className="mt-16">
         {/* logo */}

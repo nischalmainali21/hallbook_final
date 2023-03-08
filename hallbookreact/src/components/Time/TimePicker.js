@@ -63,13 +63,27 @@ function calculateMinEndTime(timeVal) {
   return _dataList;
 }*/
 
-function TimePicker() {
-  const [startTime, setStartTime] = useState("06:00");
+function TimePicker({ customStartTimeState, customEndTimeState }) {
+  // console.log(customEndTimeState,customStartTimeState)
+  let customStartTimeVal;
+  let customEndTimeVal;
+  if (!customStartTimeState) {
+    customStartTimeVal = "06:00"; //subject to change according to the current time
+  } else {
+    customStartTimeVal = customStartTimeState;
+  }
+
+  const [startTime, setStartTime] = useState(customStartTimeVal);
   const [startTimeValid, setStartTimeValid] = useState(true);
 
   let minEndTime = calculateMinEndTime(startTime);
+  if (!customEndTimeState) {
+    customEndTimeVal = minEndTime; //subject to change according to the current time
+  } else {
+    customEndTimeVal = customEndTimeState;
+  }
 
-  const [endTime, setEndTime] = useState(minEndTime);
+  const [endTime, setEndTime] = useState(customEndTimeVal);
   const [endTimeValid, setEndTimeValid] = useState(true);
 
   const handleStartTimeChange = (e) => {
@@ -102,23 +116,23 @@ function TimePicker() {
         <label className="flex flex-col gap-1">
           <span className="text-md font-bold ">Event Start Time:</span>
           <div className="flex items-center gap-2">
-          <input
-            type="time"
-            id="eventStartTime"
-            name="eventStartTime"
-            required
-            value={startTime}
-            onChange={handleStartTimeChange}
-            min={"06:00"}
-            max="17:00"
-            pattern="[0-9]{2}:[0-9]{2}"
-            list="startHours"
-            className={
-              InpputClass +
-              `${startTimeValid ? "" : "animate-bounceleft border-red-500"}`
-            }
-          />
-          <span>{startTimeValid ? <ValidIcon/> : <InvalidIcon/>}</span>
+            <input
+              type="time"
+              id="eventStartTime"
+              name="eventStartTime"
+              required
+              value={startTime}
+              onChange={handleStartTimeChange}
+              min={"06:00"}
+              max="17:00"
+              pattern="[0-9]{2}:[0-9]{2}"
+              list="startHours"
+              className={
+                InpputClass +
+                `${startTimeValid ? "" : "animate-bounceleft border-red-500"}`
+              }
+            />
+            <span>{startTimeValid ? <ValidIcon /> : <InvalidIcon />}</span>
           </div>
         </label>
 
@@ -145,26 +159,25 @@ function TimePicker() {
       {/* end time */}
       <div className="my-6 max-w-[500px]">
         <label className="flex flex-col gap-1">
-          
           <span className="text-md font-bold ">Event End Time:</span>
           <div className="flex items-center gap-2">
-          <input
-            type="time"
-            id="eventendTime"
-            name="eventendTime"
-            required
-            value={endTime}
-            onChange={handleendTimeChange}
-            min={minEndTime}
-            max="18:00"
-            pattern="[0-9]{2}:[0-9]{2}"
-            list="endHours"
-            className={
-              InpputClass +
-              `${endTimeValid ? "" : "animate-bounceleft border-red-500"}`
-            }
-          />
-          <span>{endTimeValid ? <ValidIcon/> : <InvalidIcon/>}</span>
+            <input
+              type="time"
+              id="eventendTime"
+              name="eventendTime"
+              required
+              value={endTime}
+              onChange={handleendTimeChange}
+              min={minEndTime}
+              max="18:00"
+              pattern="[0-9]{2}:[0-9]{2}"
+              list="endHours"
+              className={
+                InpputClass +
+                `${endTimeValid ? "" : "animate-bounceleft border-red-500"}`
+              }
+            />
+            <span>{endTimeValid ? <ValidIcon /> : <InvalidIcon />}</span>
           </div>
         </label>
 

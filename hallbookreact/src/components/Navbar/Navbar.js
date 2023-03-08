@@ -88,6 +88,26 @@ export default function Navbar() {
                   </NavLink>
                 </li>
                 <li>
+              <NavLink
+                to="/studentbookings"
+                onClick={() => setIsOpen(!isOpen)}
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
+                }
+              >
+                Bookings
+              </NavLink>
+            </li>
+                <li>
                   <NavLink
                     to="/facultypage"
                     className={({ isActive }) =>
@@ -103,7 +123,7 @@ export default function Navbar() {
                           }`
                     }
                   >
-                    About
+                    Faculty
                   </NavLink>
                 </li>
                 <li>
@@ -138,6 +158,7 @@ export default function Navbar() {
                 Logout
               </button>
             ) : (
+              <div className="flex gap-2">
               <NavLink
                 to="/login"
                 className={({ isActive }) =>
@@ -146,6 +167,15 @@ export default function Navbar() {
               >
                 Login
               </NavLink>
+              <NavLink
+              to="/registration"
+              className={({ isActive }) =>
+                isActive ? activeClassLink : loginNormalClassLink
+              }
+            >
+              Sign Up
+            </NavLink>
+            </div>
             )}
           </div>
           {/* hamburger */}
@@ -213,6 +243,26 @@ export default function Navbar() {
             </li>
             <li>
               <NavLink
+                to="/studentbookings"
+                onClick={() => setIsOpen(!isOpen)}
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
+                }
+              >
+                Bookings
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/facultypage"
                 onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
@@ -228,7 +278,7 @@ export default function Navbar() {
                       }`
                 }
               >
-                About
+                Faculty
               </NavLink>
             </li>
             <li>
@@ -260,6 +310,7 @@ export default function Navbar() {
                   Logout
                 </button>
               ) : (
+                <div className="flex gap-2 flex-col ">
                 <NavLink
                   to="/login"
                   onClick={() => setIsOpen(!isOpen)}
@@ -274,6 +325,21 @@ export default function Navbar() {
                 >
                   Login
                 </NavLink>
+                <NavLink
+                  to="/registration"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={({ isActive }) =>
+                    isActive ? activeClassLink : loginNormalClassLink
+                  }
+                  //   className={({ isActive }) => [
+                  //     "bg-yellow-400",
+                  //     isActive ? activeClassLink : normalClassLink
+                  //   ].join(" ")
+                  // }
+                >
+                  Sign Up
+                </NavLink>
+                </div>
               )}
             </li>
           </ul>

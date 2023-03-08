@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
+from .customFields import NPPhoneNumberField
+import datetime
 
 
 User = get_user_model()
@@ -30,14 +31,15 @@ class Event(models.Model):
     """
     eventManager = models.CharField(max_length=100)
     eventName = models.CharField(max_length=255)
-    eventDate = models.DateField()
+    eventDate = models.DateField(default = datetime.date.today)
     startTime = models.TimeField()
     endTime = models.TimeField()
     bookedHall = models.ForeignKey('Hall', on_delete=models.CASCADE)
     organizingClub = models.CharField(max_length=255,blank=True)
     EventDetailFile = models.FileField(upload_to="eventFile/",max_length=250,null=True)
     EventDetailText = models.CharField(max_length=5000,default="Details")
-    PhoneNumber = PhoneNumberField(blank=True, unique=True)
+    PhoneNumber = NPPhoneNumberField()
+    email = models.EmailField(default='example@example.com')
     
 
 class Booking(models.Model):
@@ -48,10 +50,14 @@ class Booking(models.Model):
     bookedHall = models.ForeignKey('Hall', on_delete=models.CASCADE)
     startTime = models.TimeField()
     endTime = models.TimeField()
+    eventDate = models.DateField(default=datetime.date.today)
     verified = models.BooleanField(default=False)
+
 
     # A booking can be verified by either the admin or the faculty member who created the event
     verified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_bookings')
 
-    # A booking can only be made by a user who is either a student or a faculty member
+
     booker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_events',default=1)
+
+
