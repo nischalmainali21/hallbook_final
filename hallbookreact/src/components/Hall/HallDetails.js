@@ -19,6 +19,8 @@ function HallDetails() {
       <div className="mx-auto mt-6 min-h-screen w-full max-w-4xl p-4 shadow-lg">
         <div className="text-3xl font-bold">{state.name}</div>
         <div className="text-sm text-gray-500">Capacity: {state.capacity}</div>
+        <div className="text-sm text-gray-500">Location: {state.location}</div>
+
         <div className="mt-6 h-96 w-full max-w-4xl shadow-sm">
           <ImageSlider slides={state.slides} />
         </div>

@@ -203,7 +203,7 @@ export default function Home() {
   //only if the user is student the home will render its actual components
 
   let userType = authTokens.user_type;
-
+  console.log(hallData)
   if (userType === "admin") {
     return <Navigate to="/adminpage" />;
   } else if (userType === "faculty") {
@@ -219,8 +219,9 @@ export default function Home() {
               id={hall.id}
               name={hall.hallName}
               capacity={hall.capacity}
-              slides={hall.slides}
+              url={hall.image}
               bookings={hall.bookings}
+              location={hall.location}
             />
           ))}
         </div>

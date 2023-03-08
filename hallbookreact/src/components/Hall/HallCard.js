@@ -98,8 +98,37 @@ function getUnbookedIntervals(bookedIntervals) {
 //
 //
 //
-function HallCard({ id, name, capacity, slides, bookings }) {
-  const hall = { id, name, capacity, slides };
+function HallCard({ id, name, capacity, url, bookings,location }) {
+  // console.log("location",location)
+  let slides
+  if(url){
+   
+     slides = [{
+      url: `http://127.0.0.1:8000/${url}`,
+      
+    }];
+    
+  }
+
+//   // An array of URLs
+// const urls = [
+//   '/hallFile/download_MNz5xHR.jpg',
+//   '/hallFile/download_ABC123.jpg',
+//   '/hallFile/download_XYZ789.jpg'
+// ];
+
+// // Iterate through the URLs and create an array of objects with URL and image title
+// const tempslides = urls.map(url => {
+//   const imageTitle = url.split('_')[1].split('.')[0];
+//   return { url: url, imageTitle: imageTitle };
+// });
+
+// // Output the array to the console
+// console.log(tempslides);
+
+  console.log(slides)
+  
+  const hall = { id, name, capacity, slides,location };
 
   const navigate = useNavigate();
 
