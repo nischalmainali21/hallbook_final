@@ -144,7 +144,7 @@ function HallCard({ id, name, capacity, slides, bookings }) {
     <div className="rounded-lg shadow-lg">
       <div className="flex h-80 w-full flex-col gap-4 p-2">
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between text-left">
             <div className="text-3xl font-bold">{name}</div>
             <div>
               <DateFilter
@@ -158,9 +158,9 @@ function HallCard({ id, name, capacity, slides, bookings }) {
           <div className="text-sm text-gray-500">Capacity: {capacity}</div>
         </div>
         {/* a div for the booked events and time intervals for those events needs to go here */}
-        <div className="p-2 text-cprimary-800">
-          <p>Booked Time Periods</p>
-          <ul>
+        <div className=" text-cprimary-800">
+          <p className="text-sm text-gray-500">Booked Time Periods:</p>
+          <ul className="flex gap-4">
             {bookedIntervalsData.map((interval) => (
               <li key={interval.interval}>{interval.interval}</li> //change the key!!!
             ))}
