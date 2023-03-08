@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import CButton from "../CButton";
 import useFetch from "../../hooks/useFetch";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {AiFillFile} from 'react-icons/ai'
+
 
 function FacultyBookingCard({
   id,
@@ -95,7 +96,16 @@ function FacultyBookingCard({
               <span className="font-bold">{`${startTime}-${endTime}`}</span>
             </div>
             <div className="text-md">Booker Email: <span className="font-bold">{eventData.email}</span></div>
-
+            <div className="flex items-center">
+            <span className="text-md">Event File:</span>
+            <a
+              href={`http://127.0.0.1:8000/${eventData.fileUrl}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <AiFillFile/>
+            </a>
+          </div>
           </div>
         </div>
         <div>
@@ -103,15 +113,7 @@ function FacultyBookingCard({
           <div className="text-md font-bold">
           {rejected?"Rejected":verified?"Verified":"Unverified"}
           </div>
-          <div>
-            <a
-              href={`http://127.0.0.1:8000/${eventData.fileUrl}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              file
-            </a>
-          </div>
+          
         </div>
         {verified ? (
           ""
