@@ -52,6 +52,7 @@ class Booking(models.Model):
     endTime = models.TimeField()
     eventDate = models.DateField(default=datetime.date.today)
     verified = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
 
 
     # A booking can be verified by either the admin or the faculty member who created the event

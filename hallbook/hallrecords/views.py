@@ -35,7 +35,8 @@ class BookHallAPIView(APIView):
             'eventDate': request.data['eventDate'],
             'booker': request.user.id,
             'event': event.id,
-            'verified': False
+            'verified': False,
+            'rejeted':False
         })
         booking_serializer.is_valid(raise_exception=True)
         booking_serializer.save()
