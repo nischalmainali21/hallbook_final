@@ -10,6 +10,8 @@ from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
+from django.http import FileResponse,HttpResponse
+import json
 
 class BookHallAPIView(APIView):
     permission_classes=[IsAuthenticated]
@@ -86,8 +88,33 @@ class EventDetail(APIView):
         Retrieve a single Event object by its primary key.
         """
         event = self.get_object(pk)
-        serializer = EventSerializer(event)
-        return Response(serializer.data)
+        event.eventDate = str(event.eventDate) 
+        event.startTime = str(event.startTime)
+        event.endTime = str(event.endTime)
+        
+        # Get the file download URL
+        file_url = event.EventDetailFile.url if event.EventDetailFile else None
+        
+        # Create a dictionary with the relevant details
+        data = {
+            'eventManager': event.eventManager,
+            'eventName': event.eventName,
+            'eventDate': event.eventDate,
+            'startTime': event.startTime,
+            'endTime': event.endTime,
+            'bookedHall': event.bookedHall.id,
+            'organizingClub': event.organizingClub,
+            'EventDetailText': event.EventDetailText,
+            'PhoneNumber': str(event.PhoneNumber),
+            'email': event.email,
+            'fileUrl': file_url
+        }
+        
+        # Serialize the dictionary to JSON
+        json_data = json.dumps(data)
+        
+        # Return the JSON response
+        return HttpResponse(json_data, content_type='application/json')
 
     def put(self, request, pk, format=None):
         """
