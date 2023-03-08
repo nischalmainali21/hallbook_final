@@ -6,10 +6,12 @@ from .serializers import HallSerializer, EventSerializer, BookingSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
+from user.permissions import IsAdminUser, IsFacultyUser, IsFacultyOrAdminUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
+from django.http import FileResponse,HttpResponse
+import json
 
 class BookHallAPIView(APIView):
     permission_classes=[IsAuthenticated]
@@ -86,8 +88,33 @@ class EventDetail(APIView):
         Retrieve a single Event object by its primary key.
         """
         event = self.get_object(pk)
-        serializer = EventSerializer(event)
-        return Response(serializer.data)
+        event.eventDate = str(event.eventDate) 
+        event.startTime = str(event.startTime)
+        event.endTime = str(event.endTime)
+        
+        # Get the file download URL
+        file_url = event.EventDetailFile.url if event.EventDetailFile else None
+        
+        # Create a dictionary with the relevant details
+        data = {
+            'eventManager': event.eventManager,
+            'eventName': event.eventName,
+            'eventDate': event.eventDate,
+            'startTime': event.startTime,
+            'endTime': event.endTime,
+            'bookedHall': event.bookedHall.id,
+            'organizingClub': event.organizingClub,
+            'EventDetailText': event.EventDetailText,
+            'PhoneNumber': str(event.PhoneNumber),
+            'email': event.email,
+            'fileUrl': file_url
+        }
+        
+        # Serialize the dictionary to JSON
+        json_data = json.dumps(data)
+        
+        # Return the JSON response
+        return HttpResponse(json_data, content_type='application/json')
 
     def put(self, request, pk, format=None):
         """
@@ -200,7 +227,7 @@ class HallDetail(APIView):
 
 
 class HallCreate(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsFacultyOrAdminUser]
 
     def post(self, request):
         """
@@ -328,8 +355,7 @@ class BookingDetail(APIView):
         booking = self.get_object(pk)
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
-        
-
+    
     def put(self, request, pk):
         """
         PUT request handler for BookingDetail view.
@@ -340,6 +366,37 @@ class BookingDetail(APIView):
         serializer = BookingSerializer(booking, data=request.data)
         if serializer.is_valid():
             serializer.save()
+
+            # Send email if verified
+            if booking.verified:
+                subject = 'Hall Booking Confirmation'
+                message = f'Your booking for event {booking.event.eventName} has been confirmed.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [booking.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+
+            # Send email if rejected
+            if booking.rejected:
+                subject = 'Hall Booking Rejection'
+                message = f'Your booking for event {booking.event.eventName} has been rejected.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [booking.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
