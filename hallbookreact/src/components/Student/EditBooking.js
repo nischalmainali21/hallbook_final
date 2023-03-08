@@ -1,14 +1,17 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import { useState,useEffect } from "react";
 import BookHall from "../Hall/BookHall";
 import useAuth from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 
 
 function EditBooking() {
   const { state } = useLocation();
   let { authTokens } = useAuth();
+  const navigate = useNavigate();
+
 
   const {
     id,
@@ -94,8 +97,9 @@ let submitData = async(id,payload)=> {
         })
         let data = response.json()
         if(response.ok){
+            toast.success("Booking Edited")
             console.log("successfully edited")
-            // navigate(0)
+            navigate('/studentbookings')
         }else{
             alert(response.statusText)
         }
