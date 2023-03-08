@@ -9,7 +9,7 @@ class HallSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Hall
-        fields = ('id', 'hallName', 'capacity', 'location')
+        fields = ('id', 'hallName', 'capacity', 'location','image')
 
 
 

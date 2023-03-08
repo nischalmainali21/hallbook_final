@@ -13,6 +13,7 @@ class Hall(models.Model):
     hallName = models.CharField(max_length=50)
     capacity = models.IntegerField()
     location = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="hallFile/",null=True)
 
     def is_available(self, event_start_time, event_end_time, event_date):
         """
