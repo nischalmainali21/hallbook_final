@@ -6,8 +6,8 @@ const InpputClass = `hallinputclass `;
 
 function checkStartTimeValid(timeVal) {
   const allowedMinTime = new Date();
-  const currHours = allowedMinTime.getHours()
-  allowedMinTime.setHours(currHours, 0);
+  
+  allowedMinTime.setHours(6, 0);
   const allowedMaxTime = new Date();
   allowedMaxTime.setHours(17, 59);
   let [hoursVal, minutesVal] = timeVal.split(":");
