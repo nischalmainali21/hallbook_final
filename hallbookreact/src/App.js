@@ -14,6 +14,7 @@ import CreateHall from "./components/Admin/CreateHall";
 import EditHall from "./components/Admin/EditHall";
 import StudentBookings from "./pages/StudentBookings";
 import EditBooking from "./components/Student/EditBooking";
+import SignUp from "./pages/SignUp";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/adminpage/edithall" element={<EditHall />} />
           </Route>
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/registration" element={<SignUp />}></Route>
           <Route path="*" element={<Error />}></Route>
         </Routes>
       </AuthProvider>
