@@ -6,7 +6,6 @@ function HallFIle() {
 
   const btnDEsc1 = (
     <div className="flex items-center gap-2">
-      
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -50,7 +49,7 @@ function HallFIle() {
             name="eventDetails"
             onChange={handleFileChange}
             required
-            className="rounded-md border border-cprimary-500 px-4 py-3 max-w-[300px] text-cprimary-800 shadow-sm"
+            className="max-w-[300px] rounded-md border border-cprimary-500 px-4 py-3 text-cprimary-800 shadow-sm"
           />
 
           <CButton

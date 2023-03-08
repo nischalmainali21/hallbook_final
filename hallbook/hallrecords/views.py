@@ -1,4 +1,5 @@
 
+from django.conf import settings
 from .models import Hall, Booking, Event
 from rest_framework import status,serializers
 from .serializers import HallSerializer, EventSerializer, BookingSerializer
@@ -8,7 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 class BookHallAPIView(APIView):
     permission_classes=[IsAuthenticated]
@@ -35,7 +36,8 @@ class BookHallAPIView(APIView):
             'eventDate': request.data['eventDate'],
             'booker': request.user.id,
             'event': event.id,
-            'verified': False
+            'verified': False,
+            'rejeted':False
         })
         booking_serializer.is_valid(raise_exception=True)
         booking_serializer.save()
@@ -47,13 +49,22 @@ class BookHallAPIView(APIView):
             'event': event_data,
             'booking': booking_data,
         }
-        # send_mail(
-        #     'Subject of email',
-        #     'Body of email',
-        #     'from@example.com',
-        #     ['admin@example.com'],
-        #     fail_silently=False,
-        # )
+        # Send email alert to faculty
+        subject = 'Hall Booking Request'
+        message = 'A new request has been made to book hall'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = ['facultymember987@gmail.com']
+
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=email_from,
+            to=recipient_list,
+            reply_to=[email_from],
+        )
+
+        email.send(fail_silently=False)
+        
         return Response(data, status=status.HTTP_201_CREATED)
     
     

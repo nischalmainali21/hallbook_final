@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 import "./Navbar.css";
 
@@ -13,6 +14,26 @@ export default function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  let { user, logoutUser, authTokens } = useAuth();
+  // console.log(authTokens);
+  const userType = authTokens?.user_type || null;
+  // console.log(userType)
+
+  const handleMobileLogout = () => {
+    setIsOpen(!isOpen)
+    logoutUser()
+  }
+
+  const homePath =
+    userType === null
+      ? "/"
+      : userType === "student"
+      ? "/"
+      : userType === "faculty"
+      ? "/facultypage"
+      : "/adminpage";
+  // console.log(homePath)
+
   return (
     <div>
       <nav className="w-full rounded-sm bg-cprimary-100 px-8 py-1 text-lg text-cprimary-800 shadow-lg">
@@ -21,7 +42,11 @@ export default function Navbar() {
           <div className="flex items-center space-x-10">
             {/* logo */}
             <div>
-              <Link to="/" className="flex items-center space-x-2 px-2 py-5">
+              {/* <Link to="/" className="flex items-center space-x-2 px-2 py-5"> */}
+              <Link
+                to={homePath}
+                className="flex items-center space-x-2 px-2 py-5"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -45,20 +70,79 @@ export default function Navbar() {
                   <NavLink
                     to="/"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? ""
+                              : userType !== "student"
+                              ? " hidden"
+                              : ""
+                          }`
                     }
+                    //+ `${userType===null?"":userType!=="student"?" hidden":""}`
                   >
                     Home
+                    {/* {userType===null?"Home":userType === "student"?"Home":userType === "faculty"?"FacultyHome":"AdminHome"} */}
+                  </NavLink>
+                </li>
+                <li>
+              <NavLink
+                to="/studentbookings"
+                onClick={() => setIsOpen(!isOpen)}
+                className={({ isActive }) =>
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
+                }
+              >
+                Bookings
+              </NavLink>
+            </li>
+                <li>
+                  <NavLink
+                    to="/facultypage"
+                    className={({ isActive }) =>
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? ""
+                              : userType !== "faculty"
+                              ? " hidden"
+                              : ""
+                          }`
+                    }
+                  >
+                    Faculty
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                    to="/about"
+                    to="/adminpage"
                     className={({ isActive }) =>
-                      isActive ? activeClassLink : normalClassLink
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? " hidden"
+                              : userType === "admin"
+                              ? ""
+                              : " hidden"
+                          }`
                     }
                   >
-                    About
+                    Admin
                   </NavLink>
                 </li>
               </ul>
@@ -66,14 +150,23 @@ export default function Navbar() {
           </div>
           {/* secondary nav */}
           <div className="hidden md:block">
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                isActive ? activeClassLink : loginNormalClassLink
-              }
-            >
-              Login
-            </NavLink>
+            {user ? (
+              <button
+                className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2"
+                onClick={logoutUser}
+              >
+                Logout
+              </button>
+            ) : (
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  isActive ? activeClassLink : loginNormalClassLink
+                }
+              >
+                Login
+              </NavLink>
+            )}
           </div>
           {/* hamburger */}
           <div className="md:hidden">
@@ -116,13 +209,23 @@ export default function Navbar() {
         </div>
         {/* mobile menu items */}
         {/* md:hidden min-h-[100vh] */}
-        <div className={isOpen ? "md:hidden" : "hidden"}> 
+        <div className={isOpen ? "md:hidden" : "hidden"}>
           <ul className="mb-6 flex flex-col items-center justify-center gap-y-6 md:w-auto">
             <li>
               <NavLink
                 to="/"
+                onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : normalClassLink
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
                 }
               >
                 Home
@@ -130,28 +233,88 @@ export default function Navbar() {
             </li>
             <li>
               <NavLink
-                to="/about"
+                to="/studentbookings"
+                onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : normalClassLink
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "student"
+                          ? " hidden"
+                          : ""
+                      }`
                 }
               >
-                About
+                Bookings
               </NavLink>
             </li>
             <li>
               <NavLink
-                to="/login"
+                to="/facultypage"
+                onClick={() => setIsOpen(!isOpen)}
                 className={({ isActive }) =>
-                  isActive ? activeClassLink : loginNormalClassLink
+                  isActive
+                    ? activeClassLink
+                    : normalClassLink +
+                      `${
+                        userType === null
+                          ? ""
+                          : userType !== "faculty"
+                          ? " hidden"
+                          : ""
+                      }`
                 }
-                //   className={({ isActive }) => [
-                //     "bg-yellow-400",
-                //     isActive ? activeClassLink : normalClassLink
-                //   ].join(" ")
-                // }
               >
-                Login
+                Faculty
               </NavLink>
+            </li>
+            <li>
+                  <NavLink
+                    to="/adminpage"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className={({ isActive }) =>
+                      isActive
+                        ? activeClassLink
+                        : normalClassLink +
+                          `${
+                            userType === null
+                              ? " hidden"
+                              : userType === "admin"
+                              ? ""
+                              : " hidden"
+                          }`
+                    }
+                  >
+                    Admin
+                  </NavLink>
+                </li>
+            <li>
+              {user ? (
+                <button
+                  className="rounded-md bg-rose-200 px-20 py-2.5 transition hover:bg-cprimary-300 hover:text-csecond-100 md:px-2"
+                  onClick={handleMobileLogout}
+                >
+                  Logout
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={({ isActive }) =>
+                    isActive ? activeClassLink : loginNormalClassLink
+                  }
+                  //   className={({ isActive }) => [
+                  //     "bg-yellow-400",
+                  //     isActive ? activeClassLink : normalClassLink
+                  //   ].join(" ")
+                  // }
+                >
+                  Login
+                </NavLink>
+              )}
             </li>
           </ul>
         </div>

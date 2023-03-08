@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 
-function HallTextArea() {
-  const [textInput, setTextInput] = useState("");
+function HallTextArea({textInputState}) {
+  let tempValue
+  if(!textInputState){
+    tempValue = ""
+  }
+  else{
+    tempValue = textInputState
+  }
+    const [textInput, setTextInput] = useState(tempValue);
+
+  
 
   function handleChange(e) {
     setTextInput(e.target.value);

@@ -7,11 +7,13 @@ const { parse, compareAsc, format } = require("date-fns");
 
 //returns the booked intervals and its details
 function getBookedIntervals(booking) {
+  // console.log("🚀 ~ file: HallCard.js:10 ~ getBookedIntervals ~ booking:", booking)
+
   const bookedIntervals = [];
   for (const interval in booking) {
     if (booking[interval]) {
-      const { user, event } = booking[interval];
-      bookedIntervals.push({ interval, user, event });
+      const { userID, eventID, isVerified } = booking[interval];
+      bookedIntervals.push({ interval, userID, eventID, isVerified });
     }
   }
   return bookedIntervals;
@@ -74,23 +76,23 @@ function getUnbookedIntervals(bookedIntervals) {
   return unbookedStrings;
 }
 
-function sortIntervals(intervals) {
-  const intervalTimes = intervals.map((interval) => {
-    const [start, end] = interval.split("-");
-    return {
-      start: parse(start, "H:mm", new Date()),
-      end: parse(end, "H:mm", new Date()),
-    };
-  });
+// function sortIntervals(intervals) {
+//   const intervalTimes = intervals.map((interval) => {
+//     const [start, end] = interval.split("-");
+//     return {
+//       start: parse(start, "H:mm", new Date()),
+//       end: parse(end, "H:mm", new Date()),
+//     };
+//   });
 
-  intervalTimes.sort((a, b) => compareAsc(a.start, b.start));
+//   intervalTimes.sort((a, b) => compareAsc(a.start, b.start));
 
-  const intervalStrings = intervalTimes.map(({ start, end }) => {
-    return `${format(start, "H:mm")}-${format(end, "H:mm")}`;
-  });
+//   const intervalStrings = intervalTimes.map(({ start, end }) => {
+//     return `${format(start, "H:mm")}-${format(end, "H:mm")}`;
+//   });
 
-  return intervalStrings;
-}
+//   return intervalStrings;
+// }
 
 //main starts here
 //
@@ -125,10 +127,14 @@ function HallCard({ id, name, capacity, slides, bookings }) {
 
   //intervals,user,event
   let bookedIntervalsData = getBookedIntervals(bookings[date]);
+  // console.log("🚀 ~ file: HallCard.js:128 ~ HallCard ~ bookedIntervalsData:", bookedIntervalsData)
+
   //interval
   let bookedIntervals = getBookedIntervalsOnly(bookings[date]);
+  // console.log("🚀 ~ file: HallCard.js:134 ~ HallCard ~ bookedIntervals:", bookedIntervals)
   //unbooked interval
   let unbookedIntervals = getUnbookedIntervals(bookedIntervals);
+  // console.log("🚀 ~ file: HallCard.js:137 ~ HallCard ~ unbookedIntervals:", unbookedIntervals)
 
   // console.log(Object.keys(bookings[date]))
   // for (const [key,value] of Object.entries(bookings[date])){
@@ -164,6 +170,7 @@ function HallCard({ id, name, capacity, slides, bookings }) {
         <VisualBar
           bookedIntervals={bookedIntervals}
           unbookedIntervals={unbookedIntervals}
+          bookedIntervalsData={bookedIntervalsData}
         />
 
         <div className="flex flex-col gap-6 md:flex-row">
