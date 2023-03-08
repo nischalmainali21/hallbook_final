@@ -15,6 +15,8 @@ function CreateHall() {
       if(response.ok){
         toast.success("Hall Created")
         navigate('/adminpage')
+      }else if(response.status === 400){
+        toast.error("File Type!")
       }
       // console.log(response, data);
     } catch (error) {
@@ -30,7 +32,6 @@ function CreateHall() {
     console.log([...payload]);
     console.log(e.target.image)
     submitData(payload);
-    navigate('/adminpage')
     e.preventDefault();
     
   };

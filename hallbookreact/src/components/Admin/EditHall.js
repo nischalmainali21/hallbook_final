@@ -31,6 +31,8 @@ function EditHall() {
         toast.success("Hall Edited")
         console.log(response, data);
         navigate("/");
+      }else if (response.status===400){
+        toast.error("File Type!Must be a image")
       }
     } catch (error) {
       console.error(error);
