@@ -80,6 +80,8 @@ function FacultyBookingCard({
             <div className="text-md">
               EventTime: <span className="font-bold">{`${startTime}-${endTime}`}</span>
             </div>
+            <div className="text-md">Booker Email: <span className="font-bold">{eventData.email}</span></div>
+
           </div>
         </div>
         <div>
@@ -91,7 +93,7 @@ function FacultyBookingCard({
         {verified ? (
           ""
         ) : (
-          <div className="flex md:gap-10 ">
+          <div className="flex md:gap-6 ">
             <CButton
               id={`verifyBooking${id}`}
               type="button"
