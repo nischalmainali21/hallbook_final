@@ -29,8 +29,8 @@ function CreateHall() {
 
     console.log([...payload]);
     console.log(e.target.image)
-    // submitData(payload);
-    // navigate('/adminpage')
+    submitData(payload);
+    navigate('/adminpage')
     e.preventDefault();
     
   };
