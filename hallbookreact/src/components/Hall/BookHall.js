@@ -55,6 +55,16 @@ function BookHall({ handleEditSubmit, formInputState }) {
   const [inputState, setInputState] = useState(inputFieldsState);
 
   const handleChange = (e) => {
+
+    //check if the pNumber input is actually nubmer
+    if(e.target.id === "pnumber"){
+      const isNubmer = /\d/.test(e.target.value);
+      if(isNubmer){
+        setInputState({ ...inputState, [e.target.id]: e.target.value });
+      }else{
+        return
+      }
+    }
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
