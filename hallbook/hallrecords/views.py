@@ -6,7 +6,7 @@ from .serializers import HallSerializer, EventSerializer, BookingSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
+from user.permissions import IsAdminUser, IsFacultyUser, IsFacultyOrAdminUser
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
@@ -227,7 +227,7 @@ class HallDetail(APIView):
 
 
 class HallCreate(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsFacultyOrAdminUser]
 
     def post(self, request):
         """

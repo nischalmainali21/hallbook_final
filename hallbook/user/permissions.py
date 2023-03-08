@@ -36,3 +36,8 @@ class IsFacultyUser(BasePermission):
         Check if user is authenticated and is a faculty user.
         """
         return request.user.is_authenticated and request.user.user_type == "faculty"
+
+
+class IsFacultyOrAdminUser(BasePermission):
+    def has_permission(self, request, view):
+        return IsFacultyUser().has_permission(request, view) or IsAdminUser().has_permission(request, view)
