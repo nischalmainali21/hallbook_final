@@ -17,6 +17,7 @@ function EditBooking() {
     eventDate,
     startTime,
     endTime,
+    email,
     bookedHall,
     organizingClub,
     EventDetailFile,
@@ -112,6 +113,7 @@ let submitData = async(id,payload)=> {
     eventStartTime: startTime,
     eventendTime: endTime,
     bookedHall: 1,
+    email:email,
     orgClub: organizingClub,
     EventDetailFile: EventDetailFile,
     eventDesc: EventDetailText,
@@ -133,7 +135,7 @@ let submitData = async(id,payload)=> {
     payload.append("eventManager", e.target.eventManager.value);
     payload.append("organizingClub", e.target.orgClub.value);
     payload.append("eventName", e.target.eventName.value);
-    // payload.append("email", e.target.email.value); not added to backend
+    payload.append("email", e.target.email.value);
     payload.append("PhoneNumber", e.target.pnumber.value);
     payload.append("EventDetailText", e.target.eventDesc.value);
     payload.append("EventDetailFile", file);

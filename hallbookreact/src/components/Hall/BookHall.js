@@ -44,8 +44,8 @@ function BookHall({ handleEditSubmit, formInputState }) {
       (hallField) => (inputFieldsState[hallField.id] = "")
     );
   } else {
-    let { eventManager, orgClub, eventName, pnumber } = formInputState;
-    inputFieldsState = { eventManager, orgClub, eventName, pnumber, email: "" };
+    let { eventManager, orgClub, eventName, pnumber,email } = formInputState;
+    inputFieldsState = { eventManager, orgClub, eventName, pnumber, email};
   }
 
   const [inputState, setInputState] = useState(inputFieldsState);
@@ -69,7 +69,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
     payload.append("eventManager", e.target.eventManager.value);
     payload.append("organizingClub", e.target.orgClub.value);
     payload.append("eventName", e.target.eventName.value);
-    // payload.append("email", e.target.email.value); not added to backend
+    payload.append("email", e.target.email.value); 
     payload.append("PhoneNumber", e.target.pnumber.value);
     payload.append("EventDetailText", e.target.eventDesc.value);
     payload.append("EventDetailFile", file);
