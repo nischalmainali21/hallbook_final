@@ -328,8 +328,7 @@ class BookingDetail(APIView):
         booking = self.get_object(pk)
         serializer = BookingSerializer(booking)
         return Response(serializer.data)
-        
-
+    
     def put(self, request, pk):
         """
         PUT request handler for BookingDetail view.
@@ -340,6 +339,37 @@ class BookingDetail(APIView):
         serializer = BookingSerializer(booking, data=request.data)
         if serializer.is_valid():
             serializer.save()
+
+            # Send email if verified
+            if booking.verified:
+                subject = 'Hall Booking Confirmation'
+                message = f'Your booking for event {booking.event.eventName} has been confirmed.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [booking.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+
+            # Send email if rejected
+            if booking.rejected:
+                subject = 'Hall Booking Rejection'
+                message = f'Your booking for event {booking.event.eventName} has been rejected.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [booking.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
