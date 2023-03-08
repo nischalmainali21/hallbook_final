@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import AdminHallCard from "../components/Admin/AdminHallCard";
 import Modal from "../components/Modal";
 import useFetch from "../hooks/useFetch";
@@ -40,7 +41,13 @@ function AdminPage() {
       let { response } = await api(`/api/hall/halls/${id}/delete/`, {
         method: "DELETE",
       });
-      console.log(response);
+      if(response.ok){
+        toast.success("Hall Deleted",{
+          position: toast.POSITION.BOTTOM_RIGHT
+      })
+        navigate("/");
+        console.log(response);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -64,7 +71,7 @@ function AdminPage() {
   const handleDeleteClick = (id) => {
     console.log("delete", id);
     deleteData(id);
-    navigate(0);
+    
   };
 
   return (

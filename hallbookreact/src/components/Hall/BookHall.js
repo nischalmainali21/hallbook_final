@@ -7,6 +7,7 @@ import HallInput from "./HallInput";
 import HallInputFields from "./HallInputFields";
 import HallTextArea from "./HallTextArea";
 import useFetch from "../../hooks/useFetch";
+import { toast } from "react-toastify";
 
 const loginBtnClass = `relative  block rounded-lg bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
@@ -26,10 +27,13 @@ function BookHall({ handleEditSubmit, formInputState }) {
       });
       if(response.ok){
         console.log("successfully booked")
+        toast.success("Hall Booked")
         navigate("/studentbookings")
       }
       if (response.status === 400) {
-        alert(response); //use a notification component here
+        toast.error("Time not available!",{
+          position: toast.POSITION.BOTTOM_RIGHT
+      }) //use a notification component here
       }
       // console.log(response, data);
     } catch (error) {

@@ -2,6 +2,7 @@ import React from "react";
 import HallForm from "./HallForm";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 function CreateHall() {
   let api = useFetch();
@@ -11,6 +12,10 @@ function CreateHall() {
         method: "POST",
         body: payload,
       });
+      if(response.ok){
+        toast.success("Hall Created")
+        navigate('/')
+      }
       // console.log(response, data);
     } catch (error) {
       console.error(error);
@@ -27,7 +32,7 @@ function CreateHall() {
     submitData(payload);
     // navigate('/adminpage')
     e.preventDefault();
-    navigate('/')
+    
   };
 
   return (
