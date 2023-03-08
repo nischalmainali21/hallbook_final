@@ -49,11 +49,24 @@ function HallForm({ pageTitle, handleSubmit, formInputState }) {
   // HallFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
 
   const [inputState, setInputState] = useState(inputFieldsState);
+  const [file,setFile] = useState()
   console.log(inputState);
 
   const handleChange = (e) => {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
+
+  
+  function handleFileChange(e) {
+    
+    let isImage = String(e.target.files[0]?.type).startsWith('image/')
+    
+    if (e.target.files && isImage) {
+      setFile(e.target.files[0]);
+    }
+  }
+  
+
 
   return (
     <>
@@ -78,6 +91,22 @@ function HallForm({ pageTitle, handleSubmit, formInputState }) {
               />
             ))}
           </div>
+           <div className="my-6 max-w-[500px]">
+      <label className="flex flex-col gap-1">
+        <span className="text-base font-bold">Hall Images</span>
+        <div className="flex items-center justify-start">
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleFileChange}
+            accept="image/*"
+            required
+            className="max-w-[300px] rounded-md border border-cprimary-500 px-4 py-3 text-cprimary-800 shadow-sm"
+          />
+        </div>
+      </label>
+    </div>
           <button
             className={
               buttonfixedclass +

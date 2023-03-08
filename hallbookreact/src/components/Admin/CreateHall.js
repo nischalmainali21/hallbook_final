@@ -14,7 +14,7 @@ function CreateHall() {
       });
       if(response.ok){
         toast.success("Hall Created")
-        navigate('/')
+        navigate('/adminpage')
       }
       // console.log(response, data);
     } catch (error) {
@@ -27,9 +27,9 @@ function CreateHall() {
   const handleSubmit = (e) => {
     const payload = new FormData(e.target);
 
-    // console.log([...payload]);
-
-    submitData(payload);
+    console.log([...payload]);
+    console.log(e.target.image)
+    // submitData(payload);
     // navigate('/adminpage')
     e.preventDefault();
     
