@@ -1,6 +1,8 @@
-import React,{useState} from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import HallInput from "../components/Hall/HallInput";
+const buttonfixedclass = "buttonfixedclass";
+const HallInpputClass = `hallinputclass `;
 
 function SignUp() {
   const SignUpFormFields = [
@@ -22,6 +24,7 @@ function SignUp() {
       placeholder: "John",
       minLength: 1,
     },
+
     {
       labelText: "Last Name:",
       id: "lastName",
@@ -45,14 +48,46 @@ function SignUp() {
 
   SignUpFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
   const [inputState, setInputState] = useState(inputFieldsState);
-  console.log(inputState);
+  const [selectedValue, setSelectedValue] = useState("student");
+  const navigate = useNavigate();
+  console.log(inputState, selectedValue);
 
   const handleChange = (e) => {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
-  function handleSubmit(){
-    console.log("submit")
+  let submitData = async (payload) => {
+    try {
+      let response = await fetch("http://127.0.0.1:8000/api/user/register/", {
+        method: "POST",
+        body: payload,
+      });
+      let data = response.json();
+      if (response.ok) {
+        console.log("successfully registered");
+        console.log(response, data);
+        navigate("/login");
+      } else {
+        alert(response.statusText);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  function handleSubmit(e) {
+    const payload = new FormData();
+    payload.append("email", e.target.email.value);
+    payload.append("first_name", e.target.firstName.value);
+    payload.append("last_name", e.target.lastName.value);
+    payload.append("user_type", e.target.userType.value);
+    payload.append("password", e.target.password.value);
+
+    for (const [key, value] of payload) {
+      console.log(key, value);
+    }
+    submitData(payload);
+    e.preventDefault();
   }
 
   return (
@@ -82,23 +117,50 @@ function SignUp() {
           </Link>
         </div>
       </div>
-      <div className="ml-[350px]">
-        <div>
-            <form onSubmit={handleSubmit}></form>
-          {SignUpFormFields.map((field) => (
-            <HallInput
-              key={field.id}
-              labelText={field.labelText}
-              id={field.id}
-              name={field.name}
-              type={field.type}
-              isRequired={field.isRequired}
-              placeholder={field.placeholder}
-              minLength={field.minLength}
-              handleChange={handleChange}
-              value={inputState[field.id]}
-            />
-          ))}
+      <div>
+        <div className="mx-auto flex w-1/5 flex-col">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              {SignUpFormFields.map((field) => (
+                <HallInput
+                  key={field.id}
+                  labelText={field.labelText}
+                  id={field.id}
+                  name={field.name}
+                  type={field.type}
+                  isRequired={field.isRequired}
+                  placeholder={field.placeholder}
+                  minLength={field.minLength}
+                  handleChange={handleChange}
+                  value={inputState[field.id]}
+                />
+              ))}
+            </div>
+            <div>
+              <label className="flex flex-col gap-1">
+                <span className="text-base font-bold ">User Type:</span>
+                <select
+                  name="userType"
+                  id="userType"
+                  className={HallInpputClass}
+                  value={selectedValue}
+                  onChange={(e) => setSelectedValue(e.target.value)}
+                >
+                  <option value="student">Student</option>
+                  <option value="faculty">Faculty</option>
+                </select>
+              </label>
+            </div>
+            <button
+              className={
+                buttonfixedclass +
+                ` mx-auto bg-blue-500 text-white hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800`
+              }
+              type="submit"
+            >
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>
