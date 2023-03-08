@@ -1,9 +1,62 @@
-import React from "react";
+import React,{useState} from "react";
 import { Link } from "react-router-dom";
+import HallInput from "../components/Hall/HallInput";
 
 function SignUp() {
+  const SignUpFormFields = [
+    {
+      labelText: "Email:",
+      id: "email",
+      name: "email",
+      type: "email",
+      isRequired: true,
+      placeholder: "@pcampus.edu.np",
+      minLength: 1,
+    },
+    {
+      labelText: "First Name:",
+      id: "firstName",
+      name: "firstName",
+      type: "text",
+      isRequired: true,
+      placeholder: "John",
+      minLength: 1,
+    },
+    {
+      labelText: "Last Name:",
+      id: "lastName",
+      name: "lastName",
+      type: "text",
+      isRequired: true,
+      placeholder: "Doe",
+      minLength: 1,
+    },
+    {
+      labelText: "Password:",
+      id: "password",
+      name: "password",
+      type: "password",
+      isRequired: true,
+      placeholder: "password",
+      minLength: 1,
+    },
+  ];
+  let inputFieldsState = {};
+
+  SignUpFormFields.forEach((field) => (inputFieldsState[field.id] = ""));
+  const [inputState, setInputState] = useState(inputFieldsState);
+  console.log(inputState);
+
+  const handleChange = (e) => {
+    setInputState({ ...inputState, [e.target.id]: e.target.value });
+  };
+
+  function handleSubmit(){
+    console.log("submit")
+  }
+
   return (
-    <div>
+    <div className="">
       {/* header part containing the logo and the name */}
       <div className="mt-16">
         {/* logo */}
@@ -27,6 +80,25 @@ function SignUp() {
             </svg>
             <span className="text-3xl font-bold">BookHall</span>
           </Link>
+        </div>
+      </div>
+      <div className="ml-[350px]">
+        <div>
+            <form onSubmit={handleSubmit}></form>
+          {SignUpFormFields.map((field) => (
+            <HallInput
+              key={field.id}
+              labelText={field.labelText}
+              id={field.id}
+              name={field.name}
+              type={field.type}
+              isRequired={field.isRequired}
+              placeholder={field.placeholder}
+              minLength={field.minLength}
+              handleChange={handleChange}
+              value={inputState[field.id]}
+            />
+          ))}
         </div>
       </div>
     </div>
