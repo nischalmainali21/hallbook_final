@@ -6,7 +6,7 @@ const InpputClass = `hallinputclass `;
 
 function checkStartTimeValid(timeVal) {
   const allowedMinTime = new Date();
-  
+
   allowedMinTime.setHours(6, 0);
   const allowedMaxTime = new Date();
   allowedMaxTime.setHours(17, 59);
@@ -69,7 +69,10 @@ function TimePicker({ customStartTimeState, customEndTimeState }) {
   let customStartTimeVal;
   let customEndTimeVal;
   if (!customStartTimeState) {
-    customStartTimeVal = "06:00"; //subject to change according to the current time
+    const now = new Date();
+    const hour = now.getHours();
+
+    customStartTimeVal = `${hour}:00`; //subject to change according to the current time
   } else {
     customStartTimeVal = customStartTimeState;
   }
