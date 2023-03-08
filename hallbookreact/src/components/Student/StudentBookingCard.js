@@ -97,7 +97,7 @@ function StudentBookingCard({
             id={`cancelBooking${id}`}
             type="button"
             //   onClick={() => handleRejectClick(id)}
-            onClick={() => handleCancelClick(id)}
+            onClick={() => handleCancelClick(id,eventID,verified)}
             className={
               buttonfixedclass +
               ` bg-red-500 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800`

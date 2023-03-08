@@ -5,9 +5,10 @@ import useFetch from "../hooks/useFetch";
 
 import useAuth from "../hooks/useAuth";
 import StudentBookingCard from "../components/Student/StudentBookingCard";
+import { async } from "q";
 
 function StudentBookings() {
-  let { user } = useAuth();
+  let { user, authTokens } = useAuth();
   console.log(user);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,8 +16,33 @@ function StudentBookings() {
   const navigate = useNavigate();
 
   let api = useFetch();
-  
+
   console.log(data);
+
+  let cancelEvent = async (id) => {
+    try {
+      let response = await fetch(
+        `http://127.0.0.1:8000/api/hall/events/${id}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${authTokens.access}`,
+          },
+        }
+      );
+      let data;
+      if(response.ok){
+        console.log("successfully canceled")
+        
+        navigate(0)
+      }else{
+        alert(response.statusText)
+      }
+      console.log(response,data)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     let getBookingList = async () => {
@@ -39,25 +65,30 @@ function StudentBookings() {
     getBookingList();
   }, []);
 
-  function handleEditClick(id,eventID) {
+  function handleEditClick(id, eventID) {
     console.log("edit", id);
     let getEventData = async (eventID) => {
       try {
-        let {response,data} = await api(`/api/hall/events/${eventID}/`,{
-          method:"GET",
-        })
-        if(response.ok){
-          console.log(data)
-          navigate('/studentbookings/editbooking',{state:{...data}})
+        let { response, data } = await api(`/api/hall/events/${eventID}/`, {
+          method: "GET",
+        });
+        if (response.ok) {
+          console.log(data);
+          navigate("/studentbookings/editbooking", { state: { ...data } });
         }
-      }catch(error){
-        console.error(error)
+      } catch (error) {
+        console.error(error);
       }
-    }
-    getEventData(eventID)
+    };
+    getEventData(eventID);
   }
-  function handleCancelClick(id) {
+  function handleCancelClick(id, eventID, isVerified) {
     console.log("cancel", id);
+    console.log("eventid", eventID);
+    console.log("isverified", isVerified);
+    if (!isVerified) {
+      cancelEvent(eventID)
+    }
   }
 
   let pendingData = data.filter((item) => !item.verified);
