@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 const buttonfixedclass = "buttonfixedclass";
 
-export default function Error() {
+export default function Error({title,message}) {
   return (
     <>
       <div className="flex flex-col items-center justify-center m-auto min-h-screen gap-10 animate-color-change-2x">
-        <h2 className="text-3xl font-bold">404 Error!</h2>
-        <p className="text-2xl font-semibold">Page does not exist</p>
+        <h2 className="text-3xl font-bold">{title}</h2>
+        <p className="text-2xl font-semibold">{message}</p>
         
         <button
               className={

@@ -51,7 +51,7 @@ export default function App() {
           </Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/registration" element={<SignUp />}></Route>
-          <Route path="*" element={<Error />}></Route>
+          <Route path="*" element={<Error title="404 Error!" message="Page does not exist." />}></Route>
         </Routes>
       </AuthProvider>
       <ToastContainer
