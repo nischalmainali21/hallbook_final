@@ -11,10 +11,9 @@ import InvalidIcon from "../Icons/InvalidIcon";
 
 const HallInpputClass = `hallinputclass `;
 
-
 function maxDate() {
   const today = new Date();
-  const res = new Date(today.getTime()+10*24*3600*1000)
+  const res = new Date(today.getTime() + 10 * 24 * 3600 * 1000);
 
   // console.log(res)
   // console.log(res.toISOString().slice(0,10))
@@ -32,10 +31,26 @@ function maxDate() {
   // //   console.log(`${year}-${month}-${day}`);
   // return `${year}-${month}-${day}`;
 
-  return res.toISOString().slice(0,10)
+  return res.toISOString().slice(0, 10);
 }
 
 function minDate() {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const isBefore6pm = hours < 18 || (hours === 18 && minutes < 0);
+  console.log("isBefore6pm", isBefore6pm);
+  //if today 6 pm has already passed retrun tomorrows date
+  if (!isBefore6pm) {
+    // create a new Date object
+    let currentDate = new Date();
+
+    // add 1 day to the current date
+    let tomorrowDate = new Date();
+    tomorrowDate.setDate(currentDate.getDate() + 1);
+    let res = tomorrowDate.toISOString().split("T")[0];
+    return res;
+  }
   let result = new Date().toISOString().split("T")[0];
   //   console.log(result);
   return result;
@@ -60,13 +75,12 @@ function checkDateValidity(date) {
   }
 }
 
-function DatePicker({spanText,customDivClass,customDateState}) {
-  let customDateVal
-  if(!customDateState){
-    customDateVal=minDate()
-  }
-  else{
-    customDateVal = customDateState
+function DatePicker({ spanText, customDivClass, customDateState }) {
+  let customDateVal;
+  if (!customDateState) {
+    customDateVal = minDate();
+  } else {
+    customDateVal = customDateState;
   }
   const [date, setDate] = useState(customDateVal);
   const [dateValid, setDateValid] = useState(true);
@@ -88,27 +102,21 @@ function DatePicker({spanText,customDivClass,customDateState}) {
       <label className="flex flex-col gap-1">
         <span className="text-md font-bold">{spanText}</span>
         <div className="flex items-center gap-2">
-        <input
-          id="eventDate"
-          name="eventDate"
-          type="date"
-          value={date}
-          required={true}
-          onChange={handleChange}
-          className={
-            HallInpputClass +
-            `${dateValid ? "" : "animate-bounceleft border-red-500"}`
-          }
-          min={minDateVal}
-          max={maxDateVal}
-        ></input>
-        <span>
-          {dateValid ? (
-            <ValidIcon/>
-          ) : (
-            <InvalidIcon/>
-          )}
-        </span>
+          <input
+            id="eventDate"
+            name="eventDate"
+            type="date"
+            value={date}
+            required={true}
+            onChange={handleChange}
+            className={
+              HallInpputClass +
+              `${dateValid ? "" : "animate-bounceleft border-red-500"}`
+            }
+            min={minDateVal}
+            max={maxDateVal}
+          ></input>
+          <span>{dateValid ? <ValidIcon /> : <InvalidIcon />}</span>
         </div>
       </label>
     </div>
