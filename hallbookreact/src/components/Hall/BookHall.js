@@ -135,6 +135,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
           <TimePicker
             customStartTimeState={formInputState?.eventStartTime}
             customEndTimeState={formInputState?.eventendTime}
+            datePickerSelectedDate={date}
           ></TimePicker>
           {/* time input ends here */}
 

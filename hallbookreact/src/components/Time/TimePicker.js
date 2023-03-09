@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 import ValidIcon from "../Icons/ValidIcon";
 import InvalidIcon from "../Icons/InvalidIcon";
-
+import { isSameDay } from 'date-fns';
 const InpputClass = `hallinputclass `;
 
-function checkStartTimeValid(timeVal) {
+function checkStartTimeValid(timeVal,datePickerSelectedDate) {
+  // console.log("datePickerSelectedDate",datePickerSelectedDate)
   const allowedMinTime = new Date();
+  let tocheckDate = new Date(datePickerSelectedDate)
+  //compare the user selected date for booking
+  //if it is today, only allow booking starting from current time period
+  if(isSameDay(allowedMinTime,tocheckDate)){
+    const hours = allowedMinTime.getHours()
+    // `${hour<=9?"0":''}${hour}:00`
+    allowedMinTime.setHours(hours,0)
+  }else{
 
-  allowedMinTime.setHours(6, 0);
+    allowedMinTime.setHours(6, 0);
+  }
+
   const allowedMaxTime = new Date();
   allowedMaxTime.setHours(17, 59);
   let [hoursVal, minutesVal] = timeVal.split(":");
@@ -64,7 +75,7 @@ function calculateMinEndTime(timeVal) {
   return _dataList;
 }*/
 
-function TimePicker({ customStartTimeState, customEndTimeState }) {
+function TimePicker({ customStartTimeState, customEndTimeState,datePickerSelectedDate }) {
   // console.log(customEndTimeState,customStartTimeState)
   let customStartTimeVal;
   let customEndTimeVal;
@@ -93,7 +104,7 @@ function TimePicker({ customStartTimeState, customEndTimeState }) {
 
   const handleStartTimeChange = (e) => {
     let tempStartTime = e.target.value;
-    if (checkStartTimeValid(tempStartTime)) {
+    if (checkStartTimeValid(tempStartTime,datePickerSelectedDate)) {
       setStartTime(tempStartTime);
       setStartTimeValid(true);
       setEndTime(calculateMinEndTime(tempStartTime));
