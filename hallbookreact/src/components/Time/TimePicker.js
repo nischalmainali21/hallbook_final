@@ -72,12 +72,13 @@ function TimePicker({ customStartTimeState, customEndTimeState }) {
     const now = new Date();
     const hour = now.getHours();
 
-    customStartTimeVal = `${hour}:00`; //subject to change according to the current time
+    customStartTimeVal = `${hour<=9?"0":''}${hour}:00`; //subject to change according to the current time
   } else {
     customStartTimeVal = customStartTimeState;
   }
 
   const [startTime, setStartTime] = useState(customStartTimeVal);
+  console.log("startTIme",startTime)
   const [startTimeValid, setStartTimeValid] = useState(true);
 
   let minEndTime = calculateMinEndTime(startTime);
