@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ValidIcon from "../Icons/ValidIcon";
 import InvalidIcon from "../Icons/InvalidIcon";
 
@@ -75,24 +75,37 @@ function checkDateValidity(date) {
   }
 }
 
-function DatePicker({ spanText, customDivClass, customDateState }) {
+function DatePicker({
+  spanText,
+  customDivClass,
+  customDateState,
+  date,
+  datePickerHandleChange,
+}) {
   let customDateVal;
   if (!customDateState) {
     customDateVal = minDate();
   } else {
     customDateVal = customDateState;
   }
-  const [date, setDate] = useState(customDateVal);
+
+  useEffect(() => {
+    datePickerHandleChange(customDateVal);
+  }, []);
   const [dateValid, setDateValid] = useState(true);
 
   const handleChange = (e) => {
     let date = e.target.value;
     // console.log(date)
     if (checkDateValidity(date)) {
-      setDate(date);
+      // setDate(date);
+      //call the datepickerhandlechange fucnnion to set a new date
+      datePickerHandleChange(date);
       setDateValid(true);
     } else {
-      setDate("");
+      //call the date picker handle change function
+      // setDate("");
+      datePickerHandleChange("");
       setDateValid(false);
     }
   };
