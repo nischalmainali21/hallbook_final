@@ -439,10 +439,12 @@ class BookingDetail(APIView):
         """
         try:
             booking = self.get_object(pk)
+            event = booking.event
             start_time = booking.startTime
             end_time = booking.endTime
             event_date = booking.eventDate
             booking.delete()
+            event.delete()
             
         except ObjectDoesNotExist:
             # Handle the case where no booking object with the specified pk exists
@@ -475,6 +477,19 @@ class BookingDetail(APIView):
 
                 # Serialize the new Booking object and return it as a response
                 serializer = BookingSerializer(new_booking)
+                
+                subject = 'Your Booking is now in Pending'
+                message = f'Your booking for event {rejected_booking_data.event.eventName} has been released from queue.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [rejected_booking_data.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
                 return Response(serializer.data)
             else:
                 # Handle the case where no RejectedBooking object exists
