@@ -41,8 +41,8 @@ class Event(models.Model):
     EventDetailText = models.CharField(max_length=5000,default="Details")
     PhoneNumber = NPPhoneNumberField()
     email = models.EmailField(default='example@example.com')
+    put_in_queue = models.BooleanField(default=False,null=True)
     
-
 class Booking(models.Model):
     """
     Model for a booking made by a user for a particular event in a hall.
@@ -63,3 +63,21 @@ class Booking(models.Model):
     booker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='booked_events',default=1)
 
 
+class RejectedBooking(models.Model):
+    """
+    Model for a booking made by a user that has been sent to queue.
+    """
+    event = models.ForeignKey('Event', on_delete=models.CASCADE)
+    bookedHall = models.ForeignKey('Hall', on_delete=models.CASCADE)
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    eventDate = models.DateField(default=datetime.date.today)
+    verified = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
+
+
+    # A booking can be verified by either the admin or the faculty member who created the event
+    verified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_rejected_bookings')
+
+
+    booker = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rejected_bookings',default=1)
