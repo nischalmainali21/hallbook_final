@@ -110,6 +110,7 @@ function TimePicker({
   //will now change the startTime according to the changes in customStartTimeVal
   useEffect(() => {
     setStartTime(customStartTimeVal);
+    setEndTime(calculateMinEndTime(customStartTimeVal))
   }, [customStartTimeVal]);
   
   const [startTimeValid, setStartTimeValid] = useState(true);
