@@ -1,8 +1,8 @@
 
 from django.conf import settings
-from .models import Hall, Booking, Event
+from .models import Hall, Booking, Event, RejectedBooking
 from rest_framework import status,serializers
-from .serializers import HallSerializer, EventSerializer, BookingSerializer
+from .serializers import HallSerializer, EventSerializer, BookingSerializer, RejectedBookingSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -12,26 +12,52 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.http import FileResponse,HttpResponse
 import json
+from django.db.models import Q,Min
+from django.core.exceptions import ObjectDoesNotExist
 
 class BookHallAPIView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         # Deserialize incoming data
         event_serializer = EventSerializer(data=request.data, context={'request': request, 'view': self})
         event_serializer.is_valid(raise_exception=True)
-        
-        hall_id = int(request.data['bookedHall'])
-        hall = Hall.objects.get(id=hall_id)
-        if not hall.is_available(request.data['startTime'], request.data['endTime'],request.data['eventDate']):
-            raise serializers.ValidationError('Hall is already booked for this time period.')
-
         event = event_serializer.save()
 
-        # Create new booking object
-       
+        # Check if hall is available
+        hall_id = int(request.data['bookedHall'])
+        hall = Hall.objects.get(id=hall_id)
+        overlapping_bookings = Booking.objects.filter(
+            bookedHall=hall,
+            eventDate=request.data['eventDate'],
+            endTime__gt=request.data['startTime'],
+            startTime__lt=request.data['endTime']
+        )
+
+        if overlapping_bookings.exists() and request.data.get('put_in_queue', False):
+            # Add booking request to queue
+            booking_data = {
+                'bookedHall': hall.id,
+                'startTime': request.data['startTime'],
+                'endTime': request.data['endTime'],
+                'eventDate': request.data['eventDate'],
+                'booker': request.user.id,
+                'event': event.id,
+                'verified': False,
+                'rejected': False
+            }
+            booking_serializer = RejectedBookingSerializer(data=booking_data)
+            booking_serializer.is_valid(raise_exception=True)
+            booking_serializer.save()
+            return Response(booking_serializer.data, status=status.HTTP_201_CREATED)
         
-        booking_serializer = BookingSerializer(data={
+        elif overlapping_bookings.exists():
+            # Return error if hall is not available
+            error_message = 'Hall is already booked for this time period.'
+            raise serializers.ValidationError({'error': error_message})
+
+        # Create new booking object
+        booking_data = {
             'bookedHall': hall.id,
             'startTime': request.data['startTime'],
             'endTime': request.data['endTime'],
@@ -39,8 +65,9 @@ class BookHallAPIView(APIView):
             'booker': request.user.id,
             'event': event.id,
             'verified': False,
-            'rejeted':False
-        })
+            'rejected': False
+        }
+        booking_serializer = BookingSerializer(data=booking_data)
         booking_serializer.is_valid(raise_exception=True)
         booking_serializer.save()
 
@@ -53,7 +80,7 @@ class BookHallAPIView(APIView):
         }
         # Send email alert to faculty
         subject = 'Hall Booking Request'
-        message = 'A new request has been made to book hall'
+        message = 'A new request has been made to book a hall.'
         email_from = settings.EMAIL_HOST_USER
         recipient_list = ['facultymember987@gmail.com']
 
@@ -66,8 +93,10 @@ class BookHallAPIView(APIView):
         )
 
         email.send(fail_silently=False)
-        
+
         return Response(data, status=status.HTTP_201_CREATED)
+
+
     
     
 class EventDetail(APIView):
@@ -408,6 +437,71 @@ class BookingDetail(APIView):
 
         Delete a booking instance.
         """
-        booking = self.get_object(pk)
-        booking.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            booking = self.get_object(pk)
+            event = booking.event
+            start_time = booking.startTime
+            end_time = booking.endTime
+            event_date = booking.eventDate
+            booking.delete()
+            event.delete()
+            
+        except ObjectDoesNotExist:
+            # Handle the case where no booking object with the specified pk exists
+            return Response(
+                {'error': 'Booking does not exist'},
+                status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            # Query the RejectedBooking table for the minimum ID where the eventDate and time interval match the deleted booking object
+            rejected_booking = RejectedBooking.objects.filter(
+                eventDate=event_date,
+                startTime=start_time,
+                endTime=end_time
+            ).aggregate(Min('id'))
+
+            if rejected_booking is not None:
+                # Retrieve the data from the RejectedBooking object with the minimum ID
+                rejected_booking_data = RejectedBooking.objects.get(id=rejected_booking['id__min'])
+
+                # Create a new Booking object using the data retrieved from the RejectedBooking object
+                new_booking = Booking.objects.create(
+                    event=rejected_booking_data.event,
+                    bookedHall=rejected_booking_data.bookedHall,
+                    startTime=rejected_booking_data.startTime,
+                    endTime=rejected_booking_data.endTime,
+                    eventDate=rejected_booking_data.eventDate,
+                    booker=rejected_booking_data.booker
+                )
+
+                # Serialize the new Booking object and return it as a response
+                serializer = BookingSerializer(new_booking)
+                
+                subject = 'Your Booking is now in Pending'
+                message = f'Your booking for event {rejected_booking_data.event.eventName} has been released from queue.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [rejected_booking_data.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+                return Response(serializer.data)
+            else:
+                # Handle the case where no RejectedBooking object exists
+                return Response(
+                    {'error': 'No matching rejected booking exists'},
+                    status.HTTP_400_BAD_REQUEST
+                )
+        except ObjectDoesNotExist:
+            # Handle the case where retrieving the RejectedBooking object fails
+            return Response(
+                {'error': 'Failed to retrieve rejected booking'},
+                status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        # Return an empty response if a new Booking object was not created
+        return Response({})
