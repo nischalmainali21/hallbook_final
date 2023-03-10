@@ -6,8 +6,10 @@ import useFetch from "../hooks/useFetch";
 import useAuth from "../hooks/useAuth";
 import StudentBookingCard from "../components/Student/StudentBookingCard";
 
+import { toast } from "react-toastify";
+
 function StudentBookings() {
-  let { user } = useAuth();
+  let { user, authTokens } = useAuth();
   console.log(user);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,8 +17,34 @@ function StudentBookings() {
   const navigate = useNavigate();
 
   let api = useFetch();
-  
+
   console.log(data);
+
+  let cancelEvent = async (id) => {
+    try {
+      let response = await fetch(
+        `http://127.0.0.1:8000/api/hall/events/${id}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${authTokens.access}`,
+          },
+        }
+      );
+      let data;
+      if(response.ok){
+        toast.success("Cancelled Booking")
+        console.log("successfully canceled")
+        
+        navigate('/studentbookings')
+      }else{
+        alert(response.statusText)
+      }
+      console.log(response,data)
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     let getBookingList = async () => {
@@ -39,29 +67,35 @@ function StudentBookings() {
     getBookingList();
   }, []);
 
-  function handleEditClick(id,eventID) {
+  function handleEditClick(id, eventID) {
     console.log("edit", id);
     let getEventData = async (eventID) => {
       try {
-        let {response,data} = await api(`/api/hall/events/${eventID}/`,{
-          method:"GET",
-        })
-        if(response.ok){
-          console.log(data)
-          navigate('/studentbookings/editbooking',{state:{...data}})
+        let { response, data } = await api(`/api/hall/events/${eventID}/`, {
+          method: "GET",
+        });
+        if (response.ok) {
+          console.log(data);
+          navigate("/studentbookings/editbooking", { state: { ...data } });
         }
-      }catch(error){
-        console.error(error)
+      } catch (error) {
+        console.error(error);
       }
-    }
-    getEventData(eventID)
+    };
+    getEventData(eventID);
   }
-  function handleCancelClick(id) {
+  function handleCancelClick(id, eventID, isVerified) {
     console.log("cancel", id);
+    console.log("eventid", eventID);
+    console.log("isverified", isVerified);
+    if (!isVerified) {
+      cancelEvent(eventID)
+    }
   }
 
-  let pendingData = data.filter((item) => !item.verified);
+  let pendingData = data.filter((item) => !item.verified&&!item.rejected);
   let verifiedData = data.filter((item) => item.verified);
+  let rejectedData = data.filter(item => item.rejected)
   console.log("pending", pendingData);
   console.log("verified", verifiedData);
 
@@ -113,6 +147,28 @@ function StudentBookings() {
             No Past Bookings
           </div>
         )}
+        <hr className="my-8 h-px  border-0 dark:bg-gray-100"></hr>
+        <div className="text-center text-3xl font-bold">Rejected Bookings</div>
+          {rejectedData.length?(
+            rejectedData.map(item=>(
+              <StudentBookingCard
+              key={item.id}
+              id={item.id}
+              eventID={item.event}
+              bookedHallID={item.bookedHall}
+              startTime={item.startTime}
+              endTime={item.endTime}
+              eventDate={item.eventDate}
+              rejected={item.rejected}
+              
+            />
+            ))
+          ):
+          (
+            <div className="text-center font-bold text-cprimary-600">
+            No Rejected Bookings
+          </div>
+          )}
       </div>
     </>
   );

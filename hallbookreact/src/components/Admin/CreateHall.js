@@ -2,6 +2,7 @@ import React from "react";
 import HallForm from "./HallForm";
 import useFetch from "../../hooks/useFetch";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 function CreateHall() {
   let api = useFetch();
@@ -11,6 +12,12 @@ function CreateHall() {
         method: "POST",
         body: payload,
       });
+      if(response.ok){
+        toast.success("Hall Created")
+        navigate('/adminpage')
+      }else if(response.status === 400){
+        toast.error("File Type!")
+      }
       // console.log(response, data);
     } catch (error) {
       console.error(error);
@@ -22,12 +29,11 @@ function CreateHall() {
   const handleSubmit = (e) => {
     const payload = new FormData(e.target);
 
-    // console.log([...payload]);
-
+    console.log([...payload]);
+    console.log(e.target.image)
     submitData(payload);
-    // navigate('/adminpage')
     e.preventDefault();
-    navigate('/')
+    
   };
 
   return (

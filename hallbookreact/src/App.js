@@ -14,12 +14,16 @@ import CreateHall from "./components/Admin/CreateHall";
 import EditHall from "./components/Admin/EditHall";
 import StudentBookings from "./pages/StudentBookings";
 import EditBooking from "./components/Student/EditBooking";
+import SignUp from "./pages/SignUp";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   return (
     <div className="App min-h-screen">
       <AuthProvider>
         <Navbar />
+
         <Routes>
           <Route path="/unauthorized" element={<Unauthorized />}></Route>
 
@@ -46,9 +50,23 @@ export default function App() {
             <Route path="/adminpage/edithall" element={<EditHall />} />
           </Route>
           <Route path="/login" element={<Login />}></Route>
-          <Route path="*" element={<Error />}></Route>
+          <Route path="/registration" element={<SignUp />}></Route>
+          <Route path="*" element={<Error title="404 Error!" message="Page does not exist." />}></Route>
         </Routes>
       </AuthProvider>
+      <ToastContainer
+        position="bottom-left"
+        transition={Slide}
+        autoClose={1000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

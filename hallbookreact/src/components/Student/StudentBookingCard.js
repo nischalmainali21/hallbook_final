@@ -10,6 +10,7 @@ function StudentBookingCard({
   endTime,
   eventDate,
   verified,
+  rejected,
   handleEditClick,
   handleCancelClick,
 }) {
@@ -80,31 +81,47 @@ function StudentBookingCard({
         <div>
           <div className="text-md">Status</div>
           <div className="text-md font-bold">
-            {verified ? "Verified" : "Unverified"}
+            {/* {verified ? "Verified" : "Unverified"} */}
+            {rejected?"Rejected":verified?"Verified":"Unverified"}
           </div>
         </div>
         <div className="flex md:gap-10 ">
-          {verified ? null : (
-            <CButton
-              id={`editBooking${id}`}
+          {rejected ? null : verified ? (
+            <button
+              id={`cancelBooking${id}`}
               type="button"
-              btnDesc="Edit"
-              //   onClick={() => handleVerifyClick(id,bookedHallID,eventID,startTime,endTime)}
-              onClick={() => handleEditClick(id,eventID)}
-            />
+              //   onClick={() => handleRejectClick(id)}
+              onClick={() => handleCancelClick(id, eventID, verified)}
+              className={
+                buttonfixedclass +
+                ` bg-red-500 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800`
+              }
+            >
+              Cancel
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <CButton
+                id={`editBooking${id}`}
+                type="button"
+                btnDesc="Edit"
+                //   onClick={() => handleVerifyClick(id,bookedHallID,eventID,startTime,endTime)}
+                onClick={() => handleEditClick(id, eventID)}
+              />
+              <button
+                id={`cancelBooking${id}`}
+                type="button"
+                //   onClick={() => handleRejectClick(id)}
+                onClick={() => handleCancelClick(id, eventID, verified)}
+                className={
+                  buttonfixedclass +
+                  ` bg-red-500 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800`
+                }
+              >
+                Cancel
+              </button>
+            </div>
           )}
-          <button
-            id={`cancelBooking${id}`}
-            type="button"
-            //   onClick={() => handleRejectClick(id)}
-            onClick={() => handleCancelClick(id)}
-            className={
-              buttonfixedclass +
-              ` bg-red-500 text-white hover:bg-red-700 focus:bg-red-700 active:bg-red-800`
-            }
-          >
-            Cancel
-          </button>
         </div>
       </div>
     </>

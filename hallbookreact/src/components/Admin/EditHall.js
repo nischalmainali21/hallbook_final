@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import HallForm from "./HallForm";
 import useFetch from "../../hooks/useFetch";
+import { toast } from "react-toastify";
 
 function EditHall() {
   const { state } = useLocation();
@@ -26,9 +27,16 @@ function EditHall() {
         method: "PUT",
         body: payload,
       });
-      console.log(response, data);
+      if(response.ok){
+        toast.success("Hall Edited")
+        console.log(response, data);
+        navigate("/");
+      }else if (response.status===400){
+        toast.error("File Type!Must be a image")
+      }
     } catch (error) {
       console.error(error);
+      console.log(error)
     }
   };
 
@@ -38,7 +46,7 @@ function EditHall() {
     submitData(payload);
     console.log("submit");
     e.preventDefault();
-    navigate("/");
+    
   };
   return (
     <div>

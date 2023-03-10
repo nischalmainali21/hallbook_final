@@ -7,6 +7,7 @@ import HallInput from "./HallInput";
 import HallInputFields from "./HallInputFields";
 import HallTextArea from "./HallTextArea";
 import useFetch from "../../hooks/useFetch";
+import { toast } from "react-toastify";
 
 const loginBtnClass = `relative  block rounded-lg bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
@@ -24,12 +25,15 @@ function BookHall({ handleEditSubmit, formInputState }) {
         method: "POST",
         body: payload,
       });
-      if(response.ok){
-        console.log("successfully booked")
-        navigate("/studentbookings")
+      if (response.ok) {
+        console.log("successfully booked");
+        toast.success("Hall Booked");
+        navigate("/studentbookings");
       }
       if (response.status === 400) {
-        alert(response); //use a notification component here
+        toast.error("Time not available!", {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        }); //use a notification component here
       }
       // console.log(response, data);
     } catch (error) {
@@ -44,13 +48,29 @@ function BookHall({ handleEditSubmit, formInputState }) {
       (hallField) => (inputFieldsState[hallField.id] = "")
     );
   } else {
-    let { eventManager, orgClub, eventName, pnumber } = formInputState;
-    inputFieldsState = { eventManager, orgClub, eventName, pnumber, email: "" };
+    let { eventManager, orgClub, eventName, pnumber, email } = formInputState;
+    inputFieldsState = { eventManager, orgClub, eventName, pnumber, email };
   }
 
   const [inputState, setInputState] = useState(inputFieldsState);
+  const [date, setDate] = useState("");
+
+  //function for handlechange of DatePicker component
+  const datePickerHandleChange = (date) => {
+    console.log("incoming date", date);
+    setDate(date);
+  };
 
   const handleChange = (e) => {
+    //check if the pNumber input is actually nubmer
+    if (e.target.id === "pnumber") {
+      const isNubmer = /\d/.test(e.target.value);
+      if (isNubmer) {
+        setInputState({ ...inputState, [e.target.id]: e.target.value });
+      } else {
+        return;
+      }
+    }
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
@@ -69,7 +89,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
     payload.append("eventManager", e.target.eventManager.value);
     payload.append("organizingClub", e.target.orgClub.value);
     payload.append("eventName", e.target.eventName.value);
-    // payload.append("email", e.target.email.value); not added to backend
+    payload.append("email", e.target.email.value);
     payload.append("PhoneNumber", e.target.pnumber.value);
     payload.append("EventDetailText", e.target.eventDesc.value);
     payload.append("EventDetailFile", file);
@@ -106,6 +126,8 @@ function BookHall({ handleEditSubmit, formInputState }) {
             spanText="Event Date:"
             customDivClass="my-6 max-w-[420px]"
             customDateState={formInputState?.eventDate}
+            date={date}
+            datePickerHandleChange={datePickerHandleChange}
           />
           {/* date input ends here */}
 
@@ -113,6 +135,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
           <TimePicker
             customStartTimeState={formInputState?.eventStartTime}
             customEndTimeState={formInputState?.eventendTime}
+            datePickerSelectedDate={date}
           ></TimePicker>
           {/* time input ends here */}
 
@@ -146,7 +169,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
           <HallFIle />
 
           <button className={loginBtnClass} type="submit">
-            {!formInputState?"Book Hall":"Confirm Edit"}
+            {!formInputState ? "Book Hall" : "Confirm Edit"}
           </button>
         </form>
       </div>
