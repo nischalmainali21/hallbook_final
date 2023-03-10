@@ -9,6 +9,7 @@ import HallTextArea from "./HallTextArea";
 import useFetch from "../../hooks/useFetch";
 import { toast } from "react-toastify";
 
+
 const loginBtnClass = `relative  block rounded-lg bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
@@ -33,7 +34,8 @@ function BookHall({ handleEditSubmit, formInputState }) {
       if (response.status === 400) {
         toast.error("Time not available!", {
           position: toast.POSITION.BOTTOM_RIGHT,
-        }); //use a notification component here
+        });
+        setQueueAvailableButton(true)
       }
       // console.log(response, data);
     } catch (error) {
@@ -54,6 +56,7 @@ function BookHall({ handleEditSubmit, formInputState }) {
 
   const [inputState, setInputState] = useState(inputFieldsState);
   const [date, setDate] = useState("");
+  const [queueAvailableButton, setQueueAvailableButton] = useState(false)
 
   //function for handlechange of DatePicker component
   const datePickerHandleChange = (date) => {
@@ -103,6 +106,12 @@ function BookHall({ handleEditSubmit, formInputState }) {
     e.preventDefault();
     // navigate('/')
   };
+
+  function handlequeueClick(){
+    console.log("stay in queue")
+  }
+  //class for stay in queue button
+  const stayInQueueClass = queueAvailableButton?"":" hidden"
 
   if (!formInputState) {
     formHandleSubmit = handleSubmit;
@@ -167,10 +176,14 @@ function BookHall({ handleEditSubmit, formInputState }) {
           <HallTextArea textInputState={formInputState?.eventDesc} />
 
           <HallFIle />
-
+              <div className="flex gap-2">
           <button className={loginBtnClass} type="submit">
             {!formInputState ? "Book Hall" : "Confirm Edit"}
           </button>
+          <button className={loginBtnClass+stayInQueueClass} onClick={handlequeueClick} type="button">
+            {queueAvailableButton?"Stay in queue":""}
+          </button>
+          </div>
         </form>
       </div>
     </>
