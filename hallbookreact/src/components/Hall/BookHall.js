@@ -9,7 +9,6 @@ import HallTextArea from "./HallTextArea";
 import useFetch from "../../hooks/useFetch";
 import { toast } from "react-toastify";
 
-
 const loginBtnClass = `relative  block rounded-lg bg-blue-500 px-6 py-4 text-base 
 font-medium uppercase leading-tight text-white shadow-md  transition duration-150 ease-in-out hover:bg-blue-700
 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none
@@ -28,14 +27,19 @@ function BookHall({ handleEditSubmit, formInputState }) {
       });
       if (response.ok) {
         console.log("successfully booked");
-        toast.success("Hall Booked");
+        if(checked){
+          toast.success("Placed in Queue!")
+        }else{
+
+          toast.success("Hall Booked");
+        }
         navigate("/studentbookings");
       }
       if (response.status === 400) {
         toast.error("Time not available!", {
           position: toast.POSITION.BOTTOM_RIGHT,
         });
-        setQueueAvailableButton(true)
+        setQueueAvailableButton(true);
       }
       // console.log(response, data);
     } catch (error) {
@@ -56,7 +60,8 @@ function BookHall({ handleEditSubmit, formInputState }) {
 
   const [inputState, setInputState] = useState(inputFieldsState);
   const [date, setDate] = useState("");
-  const [queueAvailableButton, setQueueAvailableButton] = useState(false)
+  const [checked, setChecked] = useState(false);
+  const [queueAvailableButton, setQueueAvailableButton] = useState(false);
 
   //function for handlechange of DatePicker component
   const datePickerHandleChange = (date) => {
@@ -77,6 +82,10 @@ function BookHall({ handleEditSubmit, formInputState }) {
     setInputState({ ...inputState, [e.target.id]: e.target.value });
   };
 
+  function handleCheckBoxChange() {
+    setChecked(!checked);
+  }
+
   console.log(inputState);
 
   let formHandleSubmit;
@@ -96,6 +105,9 @@ function BookHall({ handleEditSubmit, formInputState }) {
     payload.append("PhoneNumber", e.target.pnumber.value);
     payload.append("EventDetailText", e.target.eventDesc.value);
     payload.append("EventDetailFile", file);
+    if(checked){
+      payload.append("put_in_queue",true)
+    }
 
     for (const [key, value] of payload) {
       console.log(key, value);
@@ -104,14 +116,10 @@ function BookHall({ handleEditSubmit, formInputState }) {
     submitData(payload);
 
     e.preventDefault();
-    // navigate('/')
+    
   };
 
-  function handlequeueClick(){
-    console.log("stay in queue")
-  }
-  //class for stay in queue button
-  const stayInQueueClass = queueAvailableButton?"":" hidden"
+  
 
   if (!formInputState) {
     formHandleSubmit = handleSubmit;
@@ -176,13 +184,24 @@ function BookHall({ handleEditSubmit, formInputState }) {
           <HallTextArea textInputState={formInputState?.eventDesc} />
 
           <HallFIle />
-              <div className="flex gap-2">
-          <button className={loginBtnClass} type="submit">
-            {!formInputState ? "Book Hall" : "Confirm Edit"}
-          </button>
-          <button className={loginBtnClass+stayInQueueClass} onClick={handlequeueClick} type="button">
-            {queueAvailableButton?"Stay in queue":""}
-          </button>
+          <div className="mb-2">
+            {queueAvailableButton ? (
+              <label className="flex gap-1 animate-focus-in-expand">
+                <span className="text-md font-bold ">Stay in Queue?</span>
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={handleCheckBoxChange}
+                />
+              </label>
+            ) : (
+              ""
+            )}
+          </div>
+          <div className="flex gap-2">
+            <button className={loginBtnClass} type="submit">
+              {!formInputState ? "Book Hall" : "Confirm Edit"}
+            </button>
           </div>
         </form>
       </div>
