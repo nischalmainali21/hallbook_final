@@ -36,7 +36,8 @@ function StudentBookings() {
         toast.success("Cancelled Booking")
         console.log("successfully canceled")
         
-        navigate('/studentbookings')
+        setTimeout(navigate(0),10000)
+        
       }else{
         alert(response.statusText)
       }
@@ -88,9 +89,10 @@ function StudentBookings() {
     console.log("cancel", id);
     console.log("eventid", eventID);
     console.log("isverified", isVerified);
-    if (!isVerified) {
-      cancelEvent(eventID)
-    }
+    // if (!isVerified) {
+    //   cancelEvent(eventID)
+    // }
+    cancelEvent(eventID)
   }
 
   let pendingData = data.filter((item) => !item.verified&&!item.rejected);
