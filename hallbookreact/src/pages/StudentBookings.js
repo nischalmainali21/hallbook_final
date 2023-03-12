@@ -20,10 +20,37 @@ function StudentBookings() {
 
   console.log(data);
 
+  // let cancelEvent = async (id) => {
+  //   try {
+  //     let response = await fetch(
+  //       `http://127.0.0.1:8000/api/hall/events/${id}/`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           Authorization: `Bearer ${authTokens.access}`,
+  //         },
+  //       }
+  //     );
+  //     let data;
+  //     if(response.ok){
+  //       toast.success("Cancelled Booking")
+  //       console.log("successfully canceled")
+        
+  //       setTimeout(navigate(0),10000)
+        
+  //     }else{
+  //       alert(response.statusText)
+  //     }
+  //     console.log(response,data)
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   let cancelEvent = async (id) => {
     try {
       let response = await fetch(
-        `http://127.0.0.1:8000/api/hall/events/${id}/`,
+        `http://127.0.0.1:8000/api/hall/bookings/${id}/`,
         {
           method: "DELETE",
           headers: {
@@ -92,7 +119,8 @@ function StudentBookings() {
     // if (!isVerified) {
     //   cancelEvent(eventID)
     // }
-    cancelEvent(eventID)
+    // cancelEvent(eventID)
+    cancelEvent(id)
   }
 
   let pendingData = data.filter((item) => !item.verified&&!item.rejected);
