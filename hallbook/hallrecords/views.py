@@ -397,8 +397,7 @@ class BookingDetail(APIView):
             # Handle the case where no RejectedBooking object overlaps with the deleted booking or
             # all overlapping RejectedBooking objects also overlap with other bookings
             return Response(
-                {'New Booking Status': 'No matching rejected booking exists'},
-                status.HTTP_400_BAD_REQUEST
+                {'New Booking Status': 'No matching rejected booking exists'}
             )
 
 
