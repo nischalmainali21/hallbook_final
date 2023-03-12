@@ -31,14 +31,14 @@ function BookHall({ handleEditSubmit, formInputState }) {
           toast.success("Placed in Queue!")
         }else{
 
-          // toast.success("Hall Booked");
+          toast.success("Hall Booked");
         }
-        // navigate("/studentbookings");
+        navigate("/studentbookings");
       }
       if (response.status === 400) {
-        // toast.error("Time not available!", {
-        //   position: toast.POSITION.BOTTOM_RIGHT,
-        // });
+        toast.error("Time not available!", {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
         setQueueAvailableButton(true);
       }
       // console.log(response, data);
@@ -114,11 +114,11 @@ function BookHall({ handleEditSubmit, formInputState }) {
     }
 
     submitData(payload);
-    toast.promise(submitData,{
-      pending:"Loading",
-      success:"Hall booked promise",
-      error:"Booking failed"
-    })
+    // toast.promise(submitData,{
+    //   pending:"Loading",
+    //   success:"Hall booked promise",
+    //   error:"Booking failed"
+    // })
 
     e.preventDefault();
     
