@@ -56,7 +56,10 @@ function VisualBar({
   bookedIntervalsData,
 }) {
   // console.log("🚀 ~ file: VisualBar.js:57 ~ VisualBar ~ bookedIntervals:", bookedIntervals)
-  // console.log("🚀 ~ file: VisualBar.js:57 ~ VisualBar ~ bookedIntervalsData :", bookedIntervalsData )
+  // console.log(
+  //   "🚀 ~ file: VisualBar.js:57 ~ VisualBar ~ bookedIntervalsData :",
+  //   bookedIntervalsData
+  // );
   // console.log("🚀 ~ file: VisualBar.js:57 ~ VisualBar ~ bookedIntervals, unbookedIntervals:", bookedIntervals, unbookedIntervals)
 
   let sortedIntervals = sortIntervals(
@@ -92,12 +95,18 @@ function VisualBar({
       (obj) => obj.interval === itemToSearch
     );
     // console.log("🚀 ~ file: VisualBar.js:92 ~ bookedIntervals.forEach ~ matchingObj:", matchingObj)
-    const tempObj = { [index]: matchingObj.isVerified };
+    const tempObj = {
+      [index]: matchingObj.isVerified,
+      interval: matchingObj.interval,
+    };
 
     // console.log("🚀 ~ file: VisualBar.js:95 ~ bookedIntervals.forEach ~ tempObj:", tempObj)
     bookedIndex.push(tempObj);
   });
-  // console.log("🚀 ~ file: VisualBar.js:97 ~ bookedIntervals.forEach ~ bookedIndex:", bookedIndex)
+  console.log(
+    "🚀 ~ file: VisualBar.js:97 ~ bookedIntervals.forEach ~ bookedIndex:",
+    bookedIndex
+  );
 
   let i = -1;
   const divs = widthArr.map((item, index) => {
@@ -110,15 +119,35 @@ function VisualBar({
     // console.log("🚀 ~ file: VisualBar.js:106 ~ divs ~ isBooked:", isBooked)
 
     let tempIsVerified;
-
+    let tempStartHour;
+    let tempEndHour;
     if (isBooked) {
       i += 1;
       const tempVerifyObj = bookedIndex[i];
-      // console.log("🚀 ~ file: VisualBar.js:113 ~ divs ~ tempVerifyObj:", tempVerifyObj)
+      console.log(
+        "🚀 ~ file: VisualBar.js:113 ~ divs ~ tempVerifyObj:",
+        tempVerifyObj
+      );
 
       if (tempVerifyObj) {
+        [tempStartHour, tempEndHour] = tempVerifyObj.interval
+          .split("-")
+          .map((timeStr) => {
+            const [hours, minutes] = timeStr.split(":").map(Number);
+            return format(new Date(0, 0, 0, hours, minutes), "H");
+          });
+        console.log(
+          "🚀 ~ file: VisualBar.js:126 ~ [tempStartHour,tempEndHour]=tempVerifyObj.interval.split ~ tempStartHour, tempEndHour:",
+          tempStartHour,
+          tempEndHour
+        );
+
         const tempVerifyKey = Object.keys(tempVerifyObj)[0];
         const tempVerifyValue = tempVerifyObj[tempVerifyKey];
+        console.log(
+          "🚀 ~ file: VisualBar.js:122 ~ divs ~ tempVerifyValue:",
+          tempVerifyValue
+        );
         tempIsVerified = tempVerifyValue;
       }
     }
@@ -130,6 +159,16 @@ function VisualBar({
         : "bg-yellow-500"
       : "bg-green-500";
     return (
+      // <div className="flex items-center">
+      //   <span className="mr-2">{tempStartHour}</span>
+      //   <div
+      //     key={index}
+      //     className={`w-${item} m-2 h-4 flex-grow rounded-lg ` + backClass}
+      //     style={{ flexBasis: `${item}%` }}
+      //   ></div>
+      //   <span className="ml-2">{tempEndHour}</span>
+      // </div>
+
       <div
         key={index}
         className={`w-${item} m-2 h-4 flex-grow rounded-lg ` + backClass}
