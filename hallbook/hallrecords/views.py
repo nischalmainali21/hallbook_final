@@ -1,43 +1,411 @@
-from .models import Hall, Booking
-from rest_framework import status
-from .serializers import HallSerializer, EventSerializer, BookingSerializer
-from rest_framework import viewsets
+
+#---------views.py to handle all hall records views-----------#
+
+from .models import Hall, Booking, Event, RejectedBooking
+from .serializers import HallSerializer, EventSerializer, BookingSerializer, RejectedBookingSerializer
+from user.permissions import IsAdminUser, IsFacultyOrAdminUser
+
+import json
+from django.http import HttpResponse
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+from django.db.models import Min
+
+from rest_framework import status,serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from user.permissions import IsAdminUser, IsFacultyUser, IsStudentUser
-from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
+
+
+
+
+
+
 
 
 class BookHallAPIView(APIView):
-    permission_classes=[IsAuthenticated]
+    
+    """view to handle the booking of hall"""
+    
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, format=None):
         # Deserialize incoming data
-        serializer = EventSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        event = serializer.save()
+        event_serializer = EventSerializer(data=request.data, context={'request': request, 'view': self})
+        event_serializer.is_valid(raise_exception=True)
+        event = event_serializer.save()
 
-        # Create new booking object
-        hallId = int(request.data['bookedHall'])
-        hall = Hall.objects.get(id=hallId)
-        
-   
-        
-        booking = Booking.objects.create(
-        bookedHall=hall,
-        startTime=request.data['startTime'],
-        endTime=request.data['endTime'],
-        booker=request.user,
-        event=event,
-        verified=False
+        # Check if hall is available
+        hall_id = int(request.data['bookedHall'])
+        hall = Hall.objects.get(id=hall_id)
+        overlapping_bookings = Booking.objects.filter(
+            bookedHall=hall,
+            eventDate=request.data['eventDate'],
+            endTime__gt=request.data['startTime'],
+            startTime__lt=request.data['endTime']
         )
 
-        # Serialize the new booking object and return response
+        if overlapping_bookings.exists() and request.data.get('put_in_queue', False):
+            # Add booking request to queue
+            booking_data = {
+                'bookedHall': hall.id,
+                'startTime': request.data['startTime'],
+                'endTime': request.data['endTime'],
+                'eventDate': request.data['eventDate'],
+                'booker': request.user.id,
+                'event': event.id,
+                'verified': False,
+                'rejected': False
+            }
+            booking_serializer = RejectedBookingSerializer(data=booking_data)
+            booking_serializer.is_valid(raise_exception=True)
+            booking_serializer.save()
+            return Response(booking_serializer.data, status=status.HTTP_201_CREATED)
+        
+        elif overlapping_bookings.exists():
+            # Return error if hall is not available
+            error_message = 'Hall is already booked for this time period.'
+            raise serializers.ValidationError({'error': error_message})
+
+        # Create new booking object
+        booking_data = {
+            'bookedHall': hall.id,
+            'startTime': request.data['startTime'],
+            'endTime': request.data['endTime'],
+            'eventDate': request.data['eventDate'],
+            'booker': request.user.id,
+            'event': event.id,
+            'verified': False,
+            'rejected': False
+        }
+        booking_serializer = BookingSerializer(data=booking_data)
+        booking_serializer.is_valid(raise_exception=True)
+        booking_serializer.save()
+
+        # Serialize the new booking and event objects and return response
+        event_data = event_serializer.data
+        booking_data = booking_serializer.data
+        data = {
+            'event': event_data,
+            'booking': booking_data,
+        }
+        # Send email alert to faculty
+        subject = 'Hall Booking Request'
+        message = 'A new request has been made to book a hall.'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = ['facultymember987@gmail.com']
+
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=email_from,
+            to=recipient_list,
+            reply_to=[email_from],
+        )
+
+        email.send(fail_silently=False)
+
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+    
+    
+class EventDetail(APIView):
+    """Event Detail class to get put and delete event instances"""
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self, pk):
+        """
+        Helper method to get the Event object for a given primary key.
+        Raises a Http404 exception if the object doesn't exist.
+        """
+        try:
+            return Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+
+    def get(self, request, pk, format=None):
+        """
+        Retrieve a single Event object by its primary key.
+        """
+        event = self.get_object(pk)
+        event.eventDate = str(event.eventDate) 
+        event.startTime = str(event.startTime)
+        event.endTime = str(event.endTime)
+        
+        # Get the file download URL
+        file_url = event.EventDetailFile.url if event.EventDetailFile else None
+        
+        # Create a dictionary with the relevant details
+        data = {
+            'eventManager': event.eventManager,
+            'eventName': event.eventName,
+            'eventDate': event.eventDate,
+            'startTime': event.startTime,
+            'endTime': event.endTime,
+            'bookedHall': event.bookedHall.id,
+            'organizingClub': event.organizingClub,
+            'EventDetailText': event.EventDetailText,
+            'PhoneNumber': str(event.PhoneNumber),
+            'email': event.email,
+            'fileUrl': file_url
+        }
+        
+        # Serialize the dictionary to JSON
+        json_data = json.dumps(data)
+        
+        # Return the JSON response
+        return HttpResponse(json_data, content_type='application/json')
+
+    def put(self, request, pk, format=None):
+        """
+        Update an existing Event object by its primary key.
+        """
+        event = self.get_object(pk)
+        serializer = EventSerializer(event, data=request.data, context={'request': request, 'view': self})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # Update bookings associated with the event
+        bookings = Booking.objects.filter(event=event)
+        for booking in bookings:
+            booking_serializer = BookingSerializer(booking, data=request.data, partial=True)
+            booking_serializer.is_valid(raise_exception=True)
+            booking_serializer.save()
+
+        return Response(serializer.data)
+
+    def delete(self, request, pk, format=None):
+        """
+        Delete an existing Event object by its primary key.
+        """
+        event = self.get_object(pk)
+        # Delete associated bookings first
+        bookings = Booking.objects.filter(event=event)
+        bookings.delete()
+        event.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class EventList(APIView):
+    permission_classes = [IsAuthenticated]
+    """
+    View to list all events.
+    """
+
+    def get(self, request):
+        """
+        GET request handler for EventList view.
+        """
+        
+        event = Event.objects.all()
+
+        serializer = EventSerializer(event, many=True)
+        return Response(serializer.data)
+
+
+
+
+class BookingList(APIView):
+    permission_classes = [AllowAny]
+    """
+    View to list all bookings and create a new booking.
+    """
+
+    def get(self, request):
+        """
+        GET request handler for BookingList view.
+
+        If user is staff, return all bookings.
+        If user is non-staff, return only their own bookings.
+        """
+        # if request.user.is_staff:
+        #     # For staff users, return all bookings
+        #     bookings = Booking.objects.all()
+        # else:
+        #     # For non-staff users, return only their own bookings
+        #     bookings = Booking.objects.filter(booker=request.user)
+        
+        bookings = Booking.objects.all()
+
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        """
+        POST request handler for BookingList view.
+
+        Create a new booking.
+        """
+        serializer = BookingSerializer(data=request.data)
+        if serializer.is_valid():
+            # Set the booker to the current user
+            serializer.validated_data['booker'] = request.user
+            # Save the booking
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BookingDetail(APIView):
+    permission_classes=[IsAuthenticated]
+    """
+    View to retrieve, update or delete a booking instance.
+    """
+
+    def get_object(self, pk):
+        """
+        Helper method to get the booking instance with the given primary key.
+        """
+        return get_object_or_404(Booking, pk=pk)
+
+    def get(self, request, pk):
+        """
+        GET request handler for BookingDetail view.
+
+        Retrieve a booking instance.
+        """
+        booking = self.get_object(pk)
         serializer = BookingSerializer(booking)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data)
+    
+    def put(self, request, pk):
+        """
+        PUT request handler for BookingDetail view.
+
+        Update a booking instance.
+        """
+        booking = self.get_object(pk)
+        serializer = BookingSerializer(booking, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            # Send email if verified
+            if booking.verified:
+                subject = 'Hall Booking Confirmation'
+                message = f'Your booking for event {booking.event.eventName} has been confirmed.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [booking.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+
+            # Send email if rejected
+            if booking.rejected:
+                subject = 'Hall Booking Rejection'
+                message = f'Your booking for event {booking.event.eventName} has been rejected.'
+                from_email = settings.EMAIL_HOST_USER
+                recipient_list = [booking.event.email]
+                email = EmailMessage(
+                    subject=subject,
+                    body=message,
+                    from_email=from_email,
+                    to=recipient_list,
+                    reply_to=[from_email],
+                )
+                email.send(fail_silently=False)
+
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+    def delete(self, request, pk):
+        """
+        DELETE request handler for BookingDetail view.
+
+        Delete a booking instance.
+        """
+        try:
+            # Retrieve the booking instance with the specified pk
+            booking = self.get_object(pk)
+            event = booking.event
+            start_time = booking.startTime
+            end_time = booking.endTime
+            event_date = booking.eventDate
+            booking.delete()
+            event.delete()
+
+        except ObjectDoesNotExist:
+            # Handle the case where no booking object with the specified pk exists
+            return Response(
+                {'error': 'Booking does not exist'},
+                status.HTTP_404_NOT_FOUND
+            )
+
+        # Query the RejectedBooking table for all objects with matching event date and time interval
+        rejected_bookings = RejectedBooking.objects.filter(
+            eventDate=event_date,
+            startTime__lt=end_time,
+            endTime__gt=start_time
+        )
+
+        # Retrieve the minimum ID RejectedBooking object that overlaps with the deleted booking
+        min_id_rejected_booking = None
+        for rejected_booking in rejected_bookings:
+            if (not min_id_rejected_booking or
+                    rejected_booking.id < min_id_rejected_booking.id):
+                # Check if the retrieved RejectedBooking object overlaps with any other bookings
+                overlapping_bookings = Booking.objects.filter(
+                    eventDate=rejected_booking.eventDate,
+                    startTime__lt=rejected_booking.endTime,
+                    endTime__gt=rejected_booking.startTime
+                )
+
+                if not overlapping_bookings.exists():
+                    # Create a new Booking object using the data retrieved from the RejectedBooking object
+                    new_booking = Booking.objects.create(
+                        event=rejected_booking.event,
+                        bookedHall=rejected_booking.bookedHall,
+                        startTime=rejected_booking.startTime,
+                        endTime=rejected_booking.endTime,
+                        eventDate=rejected_booking.eventDate,
+                        booker=rejected_booking.booker
+                    )
+
+                    # Serialize the new Booking object and return it as a response
+                    serializer = BookingSerializer(new_booking)
+
+                    # Send an email notification to the event organizer
+                    subject = 'Your Booking is now in Pending'
+                    message = f'Your booking for event {rejected_booking.event.eventName} has been released from queue.'
+                    from_email = settings.EMAIL_HOST_USER
+                    recipient_list = [rejected_booking.event.email]
+                    email = EmailMessage(
+                        subject=subject,
+                        body=message,
+                        from_email=from_email,
+                        to=recipient_list,
+                        reply_to=[from_email],
+                    )
+                    email.send(fail_silently=False)
+
+                    min_id_rejected_booking = rejected_booking
+
+        if min_id_rejected_booking:
+            # Delete the retrieved RejectedBooking object with the minimum ID
+            min_id_rejected_booking.delete()
+            return Response(serializer.data)
+        else:
+            # Handle the case where no RejectedBooking object overlaps with the deleted booking or
+            # all overlapping RejectedBooking objects also overlap with other bookings
+            return Response(
+                {'New Booking Status': 'No matching rejected booking exists'}
+            )
+
+
+
+
+
+
+#-----Handling hall creation,deletion,get,update-------#
 class HallList(APIView):
     """
     API view to get a list of all halls.
@@ -100,7 +468,7 @@ class HallDetail(APIView):
 
 
 class HallCreate(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsFacultyOrAdminUser]
 
     def post(self, request):
         """
@@ -164,100 +532,3 @@ class HallDelete(APIView):
 
         hall.delete()
         return Response({'message': 'Hall deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
-
-
-class BookingList(APIView):
-    permission_classes = [IsAuthenticated]
-    """
-    View to list all bookings and create a new booking.
-    """
-
-    def get(self, request):
-        """
-        GET request handler for BookingList view.
-
-        If user is staff, return all bookings.
-        If user is non-staff, return only their own bookings.
-        """
-        if request.user.is_staff:
-            # For staff users, return all bookings
-            bookings = Booking.objects.all()
-        else:
-            # For non-staff users, return only their own bookings
-            bookings = Booking.objects.filter(booker=request.user)
-
-        serializer = BookingSerializer(bookings, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        """
-        POST request handler for BookingList view.
-
-        Create a new booking.
-        """
-        serializer = BookingSerializer(data=request.data)
-        if serializer.is_valid():
-            # Set the booker to the current user
-            serializer.validated_data['booker'] = request.user
-            # Save the booking
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class BookingDetail(APIView):
-    permission_classes=[IsStudentUser]
-    """
-    View to retrieve, update or delete a booking instance.
-    """
-
-    def get_object(self, pk):
-        """
-        Helper method to get the booking instance with the given primary key.
-        """
-        return get_object_or_404(Booking, pk=pk)
-
-    def get(self, request, pk):
-        """
-        GET request handler for BookingDetail view.
-
-        Retrieve a booking instance.
-        """
-        booking = self.get_object(pk)
-        if request.user.is_staff or booking.booker == request.user:
-            serializer = BookingSerializer(booking)
-            return Response(serializer.data)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
-    def put(self, request, pk):
-        """
-        PUT request handler for BookingDetail view.
-
-        Update a booking instance.
-        """
-        booking = self.get_object(pk)
-        if request.user.is_staff or booking.booker == request.user:
-            serializer = BookingSerializer(booking, data=request.data)
-            if serializer.is_valid():
-                # Set the booker to the current user
-                serializer.validated_data['booker'] = request.user
-                # Save the updated booking
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-
-    def delete(self, request, pk):
-        """
-        DELETE request handler for BookingDetail view.
-
-        Delete a booking instance.
-        """
-        booking = self.get_object(pk)
-        if request.user.is_staff or booking.booker == request.user:
-            booking.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
